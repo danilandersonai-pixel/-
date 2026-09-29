@@ -8,15 +8,15 @@ type AvatarProps = {
   size?: number;
 };
 
-/** Кружок с инициалами (фото подопечного появится позже) */
+/** Квадратик с инициалами (фото подопечного появится позже) */
 export function Avatar({ initials, size = 44 }: AvatarProps) {
   const { colors } = useTheme();
   return (
     <View
-      style={[styles.circle, { width: size, height: size, backgroundColor: colors.primarySoft }]}
+      style={[styles.circle, { width: size, height: size, backgroundColor: colors.surfaceMuted }]}
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants">
-      <AppText variant="headline" color="primary" style={{ fontSize: size * 0.38 }}>
+      <AppText variant="title" style={{ fontSize: size * 0.4, lineHeight: size * 0.5 }}>
         {initials}
       </AppText>
     </View>
@@ -25,7 +25,7 @@ export function Avatar({ initials, size = 44 }: AvatarProps) {
 
 const styles = StyleSheet.create({
   circle: {
-    borderRadius: radius.full,
+    borderRadius: radius.md,
     alignItems: 'center',
     justifyContent: 'center',
   },

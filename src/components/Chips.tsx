@@ -1,7 +1,7 @@
 import { Pressable, ScrollView, StyleSheet } from 'react-native';
 
 import { AppText } from '@/components/AppText';
-import { minTouchSize, radius, spacing, useTheme } from '@/theme';
+import { fonts, minTouchSize, radius, spacing, useTheme } from '@/theme';
 
 type ChipsProps<T extends string> = {
   options: readonly { value: T; label: string }[];
@@ -33,12 +33,12 @@ export function Chips<T extends string>({ options, value, onChange, label }: Chi
             style={({ pressed }) => [
               styles.chip,
               {
-                backgroundColor: selected ? colors.primarySoft : colors.surface,
-                borderColor: selected ? colors.primary : colors.border,
+                backgroundColor: selected ? colors.text : colors.surface,
+                borderColor: selected ? colors.text : colors.border,
               },
               pressed && styles.pressed,
             ]}>
-            <AppText variant="callout" color={selected ? 'primary' : 'textSecondary'}>
+            <AppText variant="callout" color={selected ? 'background' : 'textSecondary'} style={selected && styles.selectedLabel}>
               {option.label}
             </AppText>
           </Pressable>
@@ -61,8 +61,11 @@ const styles = StyleSheet.create({
     minHeight: minTouchSize,
     justifyContent: 'center',
     paddingHorizontal: spacing.lg,
-    borderRadius: radius.full,
+    borderRadius: radius.md,
     borderWidth: 1,
+  },
+  selectedLabel: {
+    fontFamily: fonts.bodySemiBold,
   },
   pressed: {
     opacity: 0.7,

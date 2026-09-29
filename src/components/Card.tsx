@@ -17,8 +17,8 @@ export function Card({ title, footer, children }: CardProps) {
   return (
     <View style={styles.wrapper}>
       {title ? (
-        <AppText variant="caption" color="textSecondary" style={styles.title}>
-          {title.toUpperCase()}
+        <AppText variant="section" color="textSecondary" style={styles.title}>
+          {title}
         </AppText>
       ) : null}
       <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>

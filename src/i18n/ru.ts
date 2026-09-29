@@ -28,7 +28,6 @@ export const ru = {
   today: {
     title: 'Сегодня · {date}',
     workout: 'Тренировка по плану',
-    workoutAt: '{time} · {name}',
     measureDue: 'Пора сделать замер · последний {days} назад',
     measureNever: 'Замеров ещё нет — сделайте первый',
     birthdayToday: 'Сегодня день рождения · {age}',

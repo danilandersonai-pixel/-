@@ -3,6 +3,8 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "dependencies": {
+    "@expo-google-fonts/golos-text": "^0.4.2",
+    "@expo-google-fonts/oswald": "^0.4.2",
     "@expo/ui": "~57.0.20",
     "drizzle-orm": "^0.45.3",
     "expo": "~57.0.25",

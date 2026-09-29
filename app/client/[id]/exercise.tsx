@@ -52,7 +52,11 @@ export default function ExerciseScreen() {
         <View style={styles.estimate}>
           <View style={styles.estimateRow}>
             <View style={styles.flex}>
-              <StatTile label={t.tileEstimate} value={`≈ ${formatMeasure(record.bestEstimate.value)} ${t.units.estimate}`} />
+              <StatTile
+                label={t.tileEstimate}
+                value={`≈ ${formatMeasure(record.bestEstimate.value)} ${t.units.estimate}`}
+                highlight
+              />
             </View>
             <InfoButton label={t.explainLabel} onPress={() => setInfoOpen((open) => !open)} active={infoOpen} />
           </View>

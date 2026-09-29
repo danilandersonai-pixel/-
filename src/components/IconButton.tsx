@@ -10,7 +10,7 @@ type IconButtonProps = {
   onPress: () => void;
 };
 
-/** Круглая кнопка с иконкой, 44×44 */
+/** Кнопка с иконкой 48×48 на яркой заливке — главное действие экрана («+») */
 export function IconButton({ icon, label, onPress }: IconButtonProps) {
   const { colors } = useTheme();
   return (
@@ -19,17 +19,17 @@ export function IconButton({ icon, label, onPress }: IconButtonProps) {
       accessibilityLabel={label}
       onPress={onPress}
       hitSlop={8}
-      style={({ pressed }) => [styles.button, { backgroundColor: colors.primarySoft }, pressed && styles.pressed]}>
-      <Icon name={icon} color="primary" size={24} />
+      style={({ pressed }) => [styles.button, { backgroundColor: colors.accent }, pressed && styles.pressed]}>
+      <Icon name={icon} color="onAccent" size={26} />
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   button: {
-    width: minTouchSize,
-    height: minTouchSize,
-    borderRadius: radius.full,
+    width: minTouchSize + 4,
+    height: minTouchSize + 4,
+    borderRadius: radius.md,
     alignItems: 'center',
     justifyContent: 'center',
   },

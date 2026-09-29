@@ -2,7 +2,7 @@ import { Tabs } from 'expo-router/js-tabs';
 
 import { TabBarIcon } from '@/components/TabBarIcon';
 import { ru } from '@/i18n/ru';
-import { useTheme } from '@/theme';
+import { fonts, useTheme } from '@/theme';
 
 export default function TabsLayout() {
   const { colors } = useTheme();
@@ -13,6 +13,7 @@ export default function TabsLayout() {
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textTertiary,
         tabBarStyle: { backgroundColor: colors.surface, borderTopColor: colors.border },
+        tabBarLabelStyle: { fontFamily: fonts.bodyMedium },
       }}>
       <Tabs.Screen
         name="index"

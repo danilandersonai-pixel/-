@@ -4,7 +4,7 @@ import { LineChart } from 'react-native-gifted-charts';
 
 import { AppText } from '@/components/AppText';
 import { niceScale, type ProgressPoint } from '@/lib/progress';
-import { radius, spacing, useTheme } from '@/theme';
+import { fonts, radius, spacing, useTheme } from '@/theme';
 import { isoToRuDate } from '@/utils/date';
 import { formatMeasure } from '@/utils/format';
 
@@ -21,8 +21,8 @@ const CHART_HEIGHT = 180;
 const Y_AXIS_WIDTH = 44;
 /** На сколько последняя дата может выступать правее своей точки, не упираясь в край графика */
 const LAST_LABEL_OVERHANG = 4;
-/** Ширина подписи последней даты — «29.09» помещается целиком */
-const LAST_LABEL_WIDTH = 40;
+/** Ширина подписи даты — «29.09» помещается целиком */
+const DATE_LABEL_WIDTH = 40;
 
 /** ДД.ММ — полная дата видна в подсказке и в таблице под графиком */
 function shortDate(iso: string): string {
@@ -47,21 +47,20 @@ export function MetricChart({ points, unit, label, integer = false }: MetricChar
     // Подпись прямо перед последней не ставим, если она ближе шага подписей — иначе даты слипаются
     const farFromLast = points.length - 1 - index >= labelEvery;
     const showLabel = index === 0 || isLast || (index % labelEvery === 0 && farFromLast);
+    // Ячейка подписи у библиотеки шириной в шаг между точками и начинается за полшага до точки.
+    // При частых точках дата в неё не влезает и обрезается, поэтому подпись — свой блок нужной ширины
+    // под точкой. Последнюю дату прижимаем правым краем к точке, иначе она упирается в край графика.
+    const offset = isLast ? pointSpacing / 2 + LAST_LABEL_OVERHANG - DATE_LABEL_WIDTH : (pointSpacing - DATE_LABEL_WIDTH) / 2;
     return {
       // График считает от нуля — сдвигаем точки к началу нашей шкалы
       value: point.value - scale.min,
-      label: showLabel && !isLast ? shortDate(point.date) : '',
-      // Последнюю дату выравниваем по правому краю точки, иначе она обрезается краем графика
-      labelComponent: isLast
+      labelComponent: showLabel
         ? () => (
-            <AppText
-              style={[
-                styles.lastLabel,
-                { color: colors.textTertiary, marginLeft: pointSpacing / 2 + LAST_LABEL_OVERHANG - LAST_LABEL_WIDTH },
-              ]}
-              numberOfLines={1}>
-              {shortDate(point.date)}
-            </AppText>
+            <View style={[styles.dateLabel, { marginLeft: offset }]}>
+              <AppText style={[styles.dateText, { color: colors.textTertiary, textAlign: isLast ? 'right' : 'center' }]}>
+                {shortDate(point.date)}
+              </AppText>
+            </View>
           )
         : undefined,
     };
@@ -97,10 +96,9 @@ export function MetricChart({ points, unit, label, integer = false }: MetricChar
           yAxisLabelWidth={Y_AXIS_WIDTH}
           yAxisLabelTexts={yLabels}
           yAxisThickness={0}
-          yAxisTextStyle={{ color: colors.textTertiary, fontSize: 12 }}
+          yAxisTextStyle={{ color: colors.textTertiary, fontSize: 12, fontFamily: fonts.body }}
           xAxisColor={colors.border}
           xAxisThickness={1}
-          xAxisLabelTextStyle={{ color: colors.textTertiary, fontSize: 11 }}
           rulesColor={colors.border}
           rulesType="solid"
           pointerConfig={{
@@ -136,13 +134,12 @@ const styles = StyleSheet.create({
   wrapper: {
     marginLeft: -spacing.sm,
   },
-  // Ячейка подписи начинается за полшага до точки: сдвигаем текст так, чтобы его правый край был у точки,
-  // иначе последняя дата обрезается краем графика
-  lastLabel: {
-    width: LAST_LABEL_WIDTH,
-    marginTop: -6,
+  dateLabel: {
+    width: DATE_LABEL_WIDTH,
+  },
+  dateText: {
     fontSize: 11,
-    textAlign: 'right',
+    lineHeight: 14,
   },
   tooltip: {
     paddingHorizontal: spacing.md,

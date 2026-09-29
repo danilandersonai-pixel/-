@@ -2,6 +2,7 @@
 
 import type { Client, Measurement, NutritionPlan, Photo, Workout } from '@/db/schema';
 import { ru } from '@/i18n/ru';
+import { printColors } from '@/theme/print';
 import { addDays, isoToRuDate } from '@/utils/date';
 import { fill, formatInteger, formatMeasure, lowerFirst } from '@/utils/format';
 
@@ -143,15 +144,7 @@ export function escapeHtml(text: string): string {
   return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-const COLORS = {
-  text: '#0F1115',
-  muted: '#5B6270',
-  faint: '#8C93A0',
-  line: '#E1E4EA',
-  chart: '#4F46E5',
-  good: '#15803D',
-  bad: '#DC2626',
-};
+const COLORS = printColors;
 
 /** Простой линейный график в SVG для PDF: линия 2 px, точки, круглые деления, подпись последнего значения */
 export function lineChartSvg(points: ProgressPoint[], unit: string): string {

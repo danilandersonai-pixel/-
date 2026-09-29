@@ -56,7 +56,7 @@ export function ClientRow({ client, onPress, divider = false, trend = null, next
         </View>
         {trend ? (
           <View style={styles.trend}>
-            <AppText variant="headline">{`${formatNumber(trend.value, 1)} %`}</AppText>
+            <AppText variant="title" style={styles.trendValue}>{`${formatNumber(trend.value, 1)} %`}</AppText>
             <DeltaBadge delta={trend.delta} direction="down" unit="%" />
           </View>
         ) : null}
@@ -89,6 +89,11 @@ const styles = StyleSheet.create({
   trend: {
     alignItems: 'flex-end',
     gap: 2,
+  },
+  trendValue: {
+    fontSize: 22,
+    lineHeight: 26,
+    fontVariant: ['tabular-nums'],
   },
   next: {
     flexDirection: 'row',

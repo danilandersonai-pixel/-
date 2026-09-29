@@ -1,9 +1,10 @@
 import { palettes, type ColorScheme, type Palette } from './colors';
+import { fonts } from './fonts';
 import { minTouchSize, radius, spacing } from './layout';
 import { typography } from './typography';
 import { useColorSchemeName } from './useColorSchemeName';
 
-export { palettes, minTouchSize, radius, spacing, typography, useColorSchemeName };
+export { fonts, palettes, minTouchSize, radius, spacing, typography, useColorSchemeName };
 export type { ColorScheme, Palette };
 export type { TypographyVariant } from './typography';
 

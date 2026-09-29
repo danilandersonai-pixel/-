@@ -1,3 +1,4 @@
+import { useFonts } from 'expo-font';
 import { Stack, ThemeProvider } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { View } from 'react-native';
@@ -7,11 +8,15 @@ import { icons } from '@/components/Icon';
 import { useDatabaseReady } from '@/db/database';
 import { ru } from '@/i18n/ru';
 import { typography, useTheme } from '@/theme';
+import { fontFiles } from '@/theme/fontFiles';
 import { getNavigationTheme } from '@/theme/navigationTheme';
 
 export default function RootLayout() {
   const { scheme, colors } = useTheme();
   const { ready, error } = useDatabaseReady();
+  // Шрифты лежат внутри приложения и грузятся мгновенно. Если что-то пошло не так — работаем на системном.
+  const [fontsLoaded, fontError] = useFonts(fontFiles);
+  const fontsReady = fontsLoaded || fontError !== null;
 
   let content;
   if (error) {
@@ -20,8 +25,8 @@ export default function RootLayout() {
         <EmptyState icon={icons.warning} title={ru.database.errorTitle} hint={error.message} />
       </View>
     );
-  } else if (!ready) {
-    // Миграции применяются за доли секунды — показываем пустой фон
+  } else if (!ready || !fontsReady) {
+    // Миграции и шрифты готовы за доли секунды — показываем пустой фон
     content = <View style={{ flex: 1, backgroundColor: colors.background }} />;
   } else {
     content = (

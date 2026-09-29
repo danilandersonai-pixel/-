@@ -1,10 +1,11 @@
 import { router } from 'expo-router';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { AppText } from '@/components/AppText';
 import { Card } from '@/components/Card';
 import { icons } from '@/components/Icon';
 import { TodayRow } from '@/components/TodayRow';
+import { TodayWorkoutRow } from '@/components/TodayWorkoutRow';
 import type { Client, Measurement, Workout } from '@/db/schema';
 import { ru } from '@/i18n/ru';
 import { clientFullName } from '@/lib/clients';
@@ -49,22 +50,22 @@ export function TodayCard({ todayIso, clients, measurementsByClient, planned }: 
 
   const openClient = (id: string, tab?: string) =>
     router.push({ pathname: '/client/[id]', params: tab ? { id, tab } : { id } });
+  // Разделители — только между обычными строками; плашки тренировок идут отдельно сверху
   let index = 0;
   const divider = () => index++ > 0;
 
   return (
     <Card title={fill(t.title, { date: dayMonthTitle(todayIso) })}>
       {workouts.map(({ workout, name }) => (
-        <TodayRow
+        <TodayWorkoutRow
           key={workout.id}
-          icon={icons.workouts}
-          tone="primary"
-          title={workout.startTime ? fill(t.workoutAt, { time: workout.startTime, name }) : name}
+          time={workout.startTime}
+          name={name}
           subtitle={t.workout}
-          divider={divider()}
           onPress={() => router.push({ pathname: '/client/[id]/workout', params: { id: workout.clientId, wid: workout.id } })}
         />
       ))}
+      {workouts.length > 0 ? <View style={styles.afterPlaques} /> : null}
       {birthdays.map(({ client, inDays, age }) => (
         <TodayRow
           key={`birthday-${client.id}`}
@@ -104,6 +105,9 @@ export function TodayCard({ todayIso, clients, measurementsByClient, planned }: 
 }
 
 const styles = StyleSheet.create({
+  afterPlaques: {
+    height: spacing.sm,
+  },
   more: {
     paddingHorizontal: spacing.lg,
     paddingBottom: spacing.md,

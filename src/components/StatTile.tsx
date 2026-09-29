@@ -6,17 +6,25 @@ import { radius, spacing, useTheme } from '@/theme';
 type StatTileProps = {
   label: string;
   value: string;
+  /** Главный показатель экрана — на яркой заливке */
+  highlight?: boolean;
 };
 
 /** Плитка-счётчик: подпись и крупное значение */
-export function StatTile({ label, value }: StatTileProps) {
+export function StatTile({ label, value, highlight = false }: StatTileProps) {
   const { colors } = useTheme();
   return (
-    <View style={[styles.tile, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-      <AppText variant="caption" color="textSecondary" numberOfLines={1}>
+    <View
+      style={[
+        styles.tile,
+        highlight
+          ? { backgroundColor: colors.accent, borderColor: colors.accent }
+          : { backgroundColor: colors.surface, borderColor: colors.border },
+      ]}>
+      <AppText variant="caption" color={highlight ? 'onAccent' : 'textSecondary'} numberOfLines={1}>
         {label}
       </AppText>
-      <AppText variant="title" numberOfLines={1} adjustsFontSizeToFit style={styles.value}>
+      <AppText variant="title" color={highlight ? 'onAccent' : 'text'} numberOfLines={1} adjustsFontSizeToFit style={styles.value}>
         {value}
       </AppText>
     </View>
