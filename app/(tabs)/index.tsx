@@ -1,5 +1,6 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
+import { StyleSheet, View } from 'react-native';
 
 import { ArchiveLink } from '@/components/ArchiveLink';
 import { Button } from '@/components/Button';
@@ -10,6 +11,7 @@ import { IconButton } from '@/components/IconButton';
 import { icons } from '@/components/Icon';
 import { Screen } from '@/components/Screen';
 import { SearchField } from '@/components/SearchField';
+import { fillDemoData } from '@/db/demo';
 import { useActiveClients, useArchivedClients } from '@/db/useClients';
 import { useAllMeasurements } from '@/db/useMeasurements';
 import { usePlannedWorkouts } from '@/db/useWorkouts';
@@ -19,6 +21,7 @@ import { bodyFatTrend, groupByClient } from '@/lib/measurements';
 import { nextWorkoutByClient } from '@/lib/workouts';
 import { shortWhen } from '@/utils/calendar';
 import { toIsoDate } from '@/utils/date';
+import { spacing } from '@/theme';
 import { pluralRu } from '@/utils/plural';
 
 function openNewClient() {
@@ -58,7 +61,12 @@ export default function ClientsScreen() {
           icon={icons.clients}
           title={ru.clients.emptyTitle}
           hint={ru.clients.emptyHint}
-          action={<Button title={ru.clients.add} icon={icons.add} onPress={openNewClient} />}
+          action={
+            <View style={styles.actions}>
+              <Button title={ru.clients.add} icon={icons.add} onPress={openNewClient} />
+              <Button title={ru.demo.fillShort} variant="secondary" onPress={() => void fillDemoData()} />
+            </View>
+          }
         />
         {archiveLink}
       </Screen>
@@ -98,3 +106,9 @@ export default function ClientsScreen() {
     </Screen>
   );
 }
+
+const styles = StyleSheet.create({
+  actions: {
+    gap: spacing.sm,
+  },
+});

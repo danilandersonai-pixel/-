@@ -18,13 +18,15 @@ const outFile = resolve(root, process.argv[2] ?? 'dist-preview/index.html');
 // План работ для панели справа. Обновляется после каждого шага.
 const roadmap = [
   { title: 'Каркас: вкладки, светлая и тёмная тема', status: 'done' },
-  { title: 'База данных и список подопечных', status: 'done' },
-  { title: 'Карточка подопечного и согласие на обработку данных', status: 'done' },
-  { title: 'Замеры и калькулятор состава тела', status: 'done' },
+  { title: 'Калькулятор состава тела с тестами', status: 'done' },
+  { title: 'База данных, запросы и резервная копия', status: 'done' },
+  { title: 'Подопечные: список, согласие, карточка, архив', status: 'done' },
+  { title: 'Замеры: пошаговый ввод и результат', status: 'done' },
   { title: 'Прогресс: графики и фото «до/после»', status: 'done' },
   { title: 'Тренировки и календарь', status: 'done' },
   { title: 'Питание: калории и КБЖУ', status: 'done' },
-  { title: 'PDF-отчёт и резервная копия', status: 'done' },
+  { title: 'Экспорт: PDF-отчёт «Прогресс за период»', status: 'done' },
+  { title: 'Полировка и демо-данные', status: 'done' },
 ];
 
 const mimeTypes = {

@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
   },
   chip: {
-    minHeight: minTouchSize - 4,
+    minHeight: minTouchSize,
     justifyContent: 'center',
     paddingHorizontal: spacing.lg,
     borderRadius: radius.full,

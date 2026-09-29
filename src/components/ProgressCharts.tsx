@@ -52,7 +52,12 @@ export function ProgressCharts({ client, measurements }: ProgressChartsProps) {
       />
       <View style={[styles.chartCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
         <View style={styles.header}>
-          <AppText variant="headline">{unit ? `${t.metrics[metric.id]}, ${unit}` : t.metrics[metric.id]}</AppText>
+          <View style={styles.titleRow}>
+            <AppText variant="headline" style={styles.flex}>
+              {unit ? `${t.metrics[metric.id]}, ${unit}` : t.metrics[metric.id]}
+            </AppText>
+            <AppText variant="title">{`${formatMeasure(last.value)}${unit ? ` ${unit}` : ''}`}</AppText>
+          </View>
           {points.length > 1 ? (
             <DeltaBadge
               delta={last.value - first.value}
@@ -102,5 +107,13 @@ const styles = StyleSheet.create({
   },
   header: {
     gap: spacing.xs,
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    gap: spacing.sm,
+  },
+  flex: {
+    flex: 1,
   },
 });

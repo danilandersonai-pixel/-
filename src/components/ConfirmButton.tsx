@@ -14,18 +14,20 @@ type ConfirmButtonProps = {
   question: string;
   confirmTitle: string;
   onConfirm: () => void;
+  /** danger — для удаления и отзыва, secondary — для безопасных действий вроде добавления примера */
+  variant?: 'danger' | 'secondary';
 };
 
 /**
  * Кнопка для важных действий: после нажатия спрашивает подтверждение прямо на экране.
  * Системные диалоги в браузерном превью не работают, поэтому подтверждение — своё.
  */
-export function ConfirmButton({ title, icon, question, confirmTitle, onConfirm }: ConfirmButtonProps) {
+export function ConfirmButton({ title, icon, question, confirmTitle, onConfirm, variant = 'danger' }: ConfirmButtonProps) {
   const { colors } = useTheme();
   const [asking, setAsking] = useState(false);
 
   if (!asking) {
-    return <Button title={title} icon={icon} variant="danger" onPress={() => setAsking(true)} />;
+    return <Button title={title} icon={icon} variant={variant} onPress={() => setAsking(true)} />;
   }
 
   return (
@@ -40,7 +42,7 @@ export function ConfirmButton({ title, icon, question, confirmTitle, onConfirm }
         <View style={styles.flex}>
           <Button
             title={confirmTitle}
-            variant="danger"
+            variant={variant === 'danger' ? 'danger' : 'primary'}
             onPress={() => {
               setAsking(false);
               onConfirm();

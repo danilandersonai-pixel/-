@@ -1,6 +1,7 @@
 // Функции работы с данными (src/db/*.ts) на настоящем SQLite с миграциями приложения.
 
 import { exportBackup } from './backup';
+import { fillDemoData } from './demo';
 import { getClient, listActiveClients, listArchivedClients, saveClient, setClientArchived } from './clients';
 import { getActiveConsent, giveConsent, revokeConsent } from './consents';
 import { getHealth, saveHealth } from './health';
@@ -154,5 +155,20 @@ describe('питание и резервная копия', () => {
     expect(backup.tables.sets.length).toBe(1);
     expect(backup.tables.nutrition_plans.length).toBe(2);
     expect(backup.tables.consents.length).toBe(2);
+  });
+});
+
+describe('демо-данные', () => {
+  it('«Заполнить примером» добавляет трёх подопечных со всей историей', async () => {
+    const before = (await listActiveClients()).length;
+    expect(await fillDemoData()).toBe(3);
+    const clients = await listActiveClients();
+    expect(clients.length).toBe(before + 3);
+    const anna = clients.find((c) => c.firstName === 'Анна' && c.lastName === 'Смирнова');
+    expect(anna).toBeDefined();
+    expect(await getActiveConsent(anna?.id ?? '')).not.toBeNull();
+    expect((await listMeasurements(anna?.id ?? '')).length).toBe(7);
+    expect((await listWorkouts(anna?.id ?? '')).length).toBe(13);
+    expect((await listNutritionPlans(anna?.id ?? '')).length).toBe(1);
   });
 });

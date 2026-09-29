@@ -23,7 +23,7 @@ function shortDate(iso: string): string {
   return isoToRuDate(iso).slice(0, 5);
 }
 
-/** Линейный график одного показателя: тонкая линия, лёгкая заливка, подпись последнего значения */
+/** Линейный график одного показателя: тонкая линия, лёгкая заливка. Последнее значение — в заголовке над графиком. */
 export function MetricChart({ points, unit, label }: MetricChartProps) {
   const { colors } = useTheme();
   const [width, setWidth] = useState(0);
@@ -46,12 +46,6 @@ export function MetricChart({ points, unit, label }: MetricChartProps) {
             </AppText>
           )
         : undefined,
-      dataPointText: isLast ? formatMeasure(point.value) : undefined,
-      textColor: colors.text,
-      textFontSize: 13,
-      // Подпись последней точки — левее и выше, чтобы не упиралась в правый край
-      textShiftY: -12,
-      textShiftX: -30,
     };
   });
 
@@ -124,9 +118,10 @@ const styles = StyleSheet.create({
   wrapper: {
     marginLeft: -spacing.sm,
   },
+  // Подписи дат обрезаются по ширине графика — последнюю выравниваем правым краем под точкой
   lastLabel: {
     width: 44,
-    marginLeft: -8,
+    marginLeft: -20,
     marginTop: -6,
     fontSize: 11,
     textAlign: 'right',
