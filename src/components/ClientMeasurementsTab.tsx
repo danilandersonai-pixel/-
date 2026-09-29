@@ -1,6 +1,8 @@
 import { router } from 'expo-router';
+import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { AppText } from '@/components/AppText';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { EmptyState } from '@/components/EmptyState';
@@ -11,16 +13,20 @@ import type { Client } from '@/db/schema';
 import { useMeasurements } from '@/db/useMeasurements';
 import { ru } from '@/i18n/ru';
 import { compositionDelta } from '@/lib/calc/composition';
+import { csvFileName, measurementsCsv } from '@/lib/csv';
 import { compositionFor } from '@/lib/measurements';
 import { measurementOverdueDays } from '@/lib/today';
 import { spacing } from '@/theme';
 import { toIsoDate } from '@/utils/date';
 import { fill } from '@/utils/format';
 import { pluralRu } from '@/utils/plural';
+import { canShareFiles, shareTextFile } from '@/utils/share';
 
 /** Вкладка «Замеры»: история и кнопка нового замера */
 export function ClientMeasurementsTab({ client }: { client: Client }) {
   const { data: measurements } = useMeasurements(client.id);
+  const [csvMessage, setCsvMessage] = useState<string | null>(null);
+  const [csvBusy, setCsvBusy] = useState(false);
   const openNew = () => router.push({ pathname: '/client/[id]/measure', params: { id: client.id } });
 
   if (!measurements) {
@@ -38,6 +44,21 @@ export function ClientMeasurementsTab({ client }: { client: Client }) {
   }
 
   const compositions = measurements.map((m) => compositionFor(m, client));
+  const exportCsv = async () => {
+    if (!canShareFiles) {
+      setCsvMessage(ru.csv.webNote);
+      return;
+    }
+    setCsvBusy(true);
+    setCsvMessage(null);
+    try {
+      await shareTextFile(csvFileName(client), measurementsCsv(client, measurements), 'text/csv');
+    } catch {
+      setCsvMessage(ru.csv.error);
+    } finally {
+      setCsvBusy(false);
+    }
+  };
   // Список отсортирован по дате, новые сверху
   const overdue = measurementOverdueDays(measurements[0].date, toIsoDate(new Date()));
 
@@ -64,6 +85,18 @@ export function ClientMeasurementsTab({ client }: { client: Client }) {
         variant="secondary"
         onPress={() => router.push({ pathname: '/client/[id]/report', params: { id: client.id } })}
       />
+      <Button
+        title={csvBusy ? ru.csv.exporting : ru.csv.export}
+        icon={icons.table}
+        variant="secondary"
+        onPress={() => void exportCsv()}
+        disabled={csvBusy}
+      />
+      {csvMessage ? (
+        <AppText variant="caption" color="textSecondary">
+          {csvMessage}
+        </AppText>
+      ) : null}
       <Card>
         {measurements.map((m, index) => {
           const composition = compositions[index];

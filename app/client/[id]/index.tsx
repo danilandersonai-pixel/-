@@ -8,6 +8,7 @@ import { ClientMeasurementsTab } from '@/components/ClientMeasurementsTab';
 import { ClientNutritionTab } from '@/components/ClientNutritionTab';
 import { ClientProfileTab } from '@/components/ClientProfileTab';
 import { ClientSummary } from '@/components/ClientSummary';
+import { ContactButtons } from '@/components/ContactButtons';
 import { ClientWorkoutsTab } from '@/components/ClientWorkoutsTab';
 import { clientTabs, ClientTabs, type ClientTab } from '@/components/ClientTabs';
 import { EmptyState } from '@/components/EmptyState';
@@ -91,6 +92,7 @@ export default function ClientCardScreen() {
       <Stack.Screen options={{ title: clientFullName(client) }} />
       {editable ? null : <Stack.Screen options={{ headerRight: () => null }} />}
       <ClientSummary client={client} />
+      <ContactButtons client={client} />
       {client.archived ? (
         <Notice
           icon={icons.archive}

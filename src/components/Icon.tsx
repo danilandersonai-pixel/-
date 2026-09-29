@@ -45,4 +45,8 @@ export const icons = {
   backup: { ios: 'externaldrive', android: 'backup', web: 'backup' },
   birthday: { ios: 'gift', android: 'cake', web: 'cake' },
   trophy: { ios: 'trophy', android: 'emoji_events', web: 'emoji_events' },
+  call: { ios: 'phone', android: 'call', web: 'call' },
+  chat: { ios: 'message', android: 'chat', web: 'chat' },
+  send: { ios: 'paperplane', android: 'send', web: 'send' },
+  table: { ios: 'tablecells', android: 'table_chart', web: 'table_chart' },
 } satisfies Record<string, IconName>;
