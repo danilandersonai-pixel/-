@@ -18,8 +18,8 @@ const outFile = resolve(root, process.argv[2] ?? 'dist-preview/index.html');
 // План работ для панели справа. Обновляется после каждого шага.
 const roadmap = [
   { title: 'Каркас: вкладки, светлая и тёмная тема', status: 'done' },
-  { title: 'База данных и список подопечных', status: 'next' },
-  { title: 'Карточка подопечного и согласие на обработку данных', status: 'todo' },
+  { title: 'База данных и список подопечных', status: 'done' },
+  { title: 'Карточка подопечного и согласие на обработку данных', status: 'next' },
   { title: 'Замеры и калькулятор состава тела', status: 'todo' },
   { title: 'Прогресс: графики и фото «до/после»', status: 'todo' },
   { title: 'Тренировки и календарь', status: 'todo' },
