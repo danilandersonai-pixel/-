@@ -1,6 +1,6 @@
 import Constants from 'expo-constants';
 import { router } from 'expo-router';
-import { useState } from 'react';
+import { useState, useSyncExternalStore } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { AppText } from '@/components/AppText';
@@ -10,11 +10,13 @@ import { ConfirmButton } from '@/components/ConfirmButton';
 import { icons } from '@/components/Icon';
 import { InfoRow } from '@/components/InfoRow';
 import { Screen } from '@/components/Screen';
+import { SegmentedControl } from '@/components/SegmentedControl';
 import { shareBackupFile } from '@/db/backupFiles';
 import { fillDemoData } from '@/db/demo';
 import { countsText } from '@/i18n/backup';
 import { ru } from '@/i18n/ru';
 import { spacing } from '@/theme';
+import { getThemePreference, setThemePreference, subscribeThemePreference, type ThemePreference } from '@/theme/themePreference';
 import { fill } from '@/utils/format';
 import { canShareFiles } from '@/utils/share';
 
@@ -26,6 +28,12 @@ export default function SettingsScreen() {
   const [message, setMessage] = useState<{ text: string; error: boolean } | null>(null);
   const [demoMessage, setDemoMessage] = useState<{ text: string; error: boolean } | null>(null);
   const [demoBusy, setDemoBusy] = useState(false);
+  const themePreference = useSyncExternalStore(subscribeThemePreference, getThemePreference);
+  const themeOptions: { value: ThemePreference; label: string }[] = [
+    { value: 'system', label: ru.settings.themeSystem },
+    { value: 'dark', label: ru.settings.themeDark },
+    { value: 'light', label: ru.settings.themeLight },
+  ];
 
   const addDemo = async () => {
     setDemoBusy(true);
@@ -61,8 +69,8 @@ export default function SettingsScreen() {
       </Card>
 
       <View style={styles.section}>
-        <AppText variant="caption" color="textSecondary" style={styles.sectionTitle}>
-          {b.section.toUpperCase()}
+        <AppText variant="section" color="textSecondary" style={styles.sectionTitle}>
+          {b.section}
         </AppText>
         <Button title={busy ? b.saving : b.save} icon={icons.backup} onPress={() => void saveBackup()} disabled={busy} />
         {message ? (
@@ -77,8 +85,8 @@ export default function SettingsScreen() {
       </View>
 
       <View style={styles.section}>
-        <AppText variant="caption" color="textSecondary" style={styles.sectionTitle}>
-          {ru.demo.section.toUpperCase()}
+        <AppText variant="section" color="textSecondary" style={styles.sectionTitle}>
+          {ru.demo.section}
         </AppText>
         {demoBusy ? (
           <Button title={ru.demo.filling} icon={icons.clients} variant="secondary" onPress={() => undefined} disabled />
@@ -102,9 +110,23 @@ export default function SettingsScreen() {
         </AppText>
       </View>
 
+      <View style={styles.section}>
+        <AppText variant="section" color="textSecondary" style={styles.sectionTitle}>
+          {ru.settings.appearanceSection}
+        </AppText>
+        <SegmentedControl
+          label={ru.settings.theme}
+          options={themeOptions}
+          value={themePreference}
+          onChange={setThemePreference}
+        />
+        <AppText variant="caption" color="textTertiary">
+          {ru.settings.themeHint}
+        </AppText>
+      </View>
+
       <Card title={ru.settings.aboutSection}>
-        <InfoRow label={ru.settings.theme} value={ru.settings.themeSystem} />
-        <InfoRow label={ru.settings.version} value={version} divider />
+        <InfoRow label={ru.settings.version} value={version} />
       </Card>
     </Screen>
   );

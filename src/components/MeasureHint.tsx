@@ -74,8 +74,8 @@ export function MeasureHint({ field }: { field: MeasurementField }) {
         ) : null}
       </Svg>
       <View style={styles.text}>
-        <AppText variant="caption" color="primary">
-          {ru.measurement.whereToMeasure.toUpperCase()}
+        <AppText variant="section" color="primary">
+          {ru.measurement.whereToMeasure}
         </AppText>
         <AppText variant="headline">{ru.measurement.fields[field]}</AppText>
         <AppText variant="callout" color="textSecondary">

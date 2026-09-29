@@ -31,8 +31,8 @@ export function ClientForm({ values, errors, onChange, autoFocus = false, extend
   return (
     <>
       <View style={styles.section}>
-        <AppText variant="caption" color="textSecondary" style={styles.sectionTitle}>
-          {t.sectionMain.toUpperCase()}
+        <AppText variant="section" color="textSecondary" style={styles.sectionTitle}>
+          {t.sectionMain}
         </AppText>
         <TextField
           label={t.firstName}
@@ -57,8 +57,8 @@ export function ClientForm({ values, errors, onChange, autoFocus = false, extend
       </View>
 
       <View style={styles.section}>
-        <AppText variant="caption" color="textSecondary" style={styles.sectionTitle}>
-          {t.sectionCalc.toUpperCase()}
+        <AppText variant="section" color="textSecondary" style={styles.sectionTitle}>
+          {t.sectionCalc}
         </AppText>
         <SegmentedControl
           label={t.gender}
@@ -81,8 +81,8 @@ export function ClientForm({ values, errors, onChange, autoFocus = false, extend
       </View>
 
       <View style={styles.section}>
-        <AppText variant="caption" color="textSecondary" style={styles.sectionTitle}>
-          {t.sectionContacts.toUpperCase()}
+        <AppText variant="section" color="textSecondary" style={styles.sectionTitle}>
+          {t.sectionContacts}
         </AppText>
         <TextField
           label={t.phone}

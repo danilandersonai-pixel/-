@@ -109,8 +109,8 @@ export function PhotoSection({ clientId, photos }: PhotoSectionProps) {
         </>
       ) : null}
       {addPanel}
-      <AppText variant="caption" color="textSecondary">
-        {t.allPhotos.toUpperCase()}
+      <AppText variant="section" color="textSecondary">
+        {t.allPhotos}
       </AppText>
       <View style={styles.grid}>
         {[...photos].reverse().map((photo) => (

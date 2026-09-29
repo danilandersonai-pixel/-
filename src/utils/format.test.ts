@@ -58,9 +58,9 @@ describe('formatMeasure', () => {
 
 describe('formatInteger', () => {
   it('разделяет тысячи', () => {
-    expect(formatInteger(2100)).toBe('2\u202F100');
+    expect(formatInteger(2100)).toBe('2\u00A0100');
     expect(formatInteger(950.6)).toBe('951');
-    expect(formatInteger(1234567)).toBe('1\u202F234\u202F567');
+    expect(formatInteger(1234567)).toBe('1\u00A0234\u00A0567');
     expect(formatInteger(-70)).toBe('−70');
   });
 });

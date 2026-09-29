@@ -11,11 +11,12 @@ export function formatMeasure(value: number): string {
   return formatNumber(value, 1).replace(/,0$/, '');
 }
 
-/** Целое с пробелами между тысячами: 2100 → «2 100» (узкий неразрывный пробел) */
+/** Целое с пробелами между тысячами: 2100 → «2 100» (неразрывный пробел) */
 export function formatInteger(value: number): string {
   const rounded = Math.round(value);
   const sign = rounded < 0 ? '−' : '';
-  return sign + String(Math.abs(rounded)).replace(/\B(?=(\d{3})+(?!\d))/g, '\u202F');
+  // Неразрывный пробел: узкого (U+202F) нет в шрифтах приложения, и разряды слипались бы
+  return sign + String(Math.abs(rounded)).replace(/\B(?=(\d{3})+(?!\d))/g, '\u00A0');
 }
 
 /** Первая буква строчная — чтобы вставить название в середину фразы */

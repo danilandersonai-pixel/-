@@ -132,8 +132,8 @@ function PlanSummaryAndEditor({ plan, clientId, weight, bmr }: PlanSummaryAndEdi
   return (
     <>
       <View style={[styles.summary, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-        <AppText variant="caption" color="textSecondary">
-          {`${t.current.toUpperCase()} · ${fill(t.since, { date: values.startDate })}`}
+        <AppText variant="section" color="textSecondary">
+          {`${t.current} · ${fill(t.since, { date: values.startDate })}`}
         </AppText>
         {calories !== null ? (
           <View style={styles.caloriesRow}>
