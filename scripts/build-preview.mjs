@@ -27,6 +27,9 @@ const roadmap = [
   { title: 'Питание: калории и КБЖУ', status: 'done' },
   { title: 'Экспорт: PDF-отчёт «Прогресс за период»', status: 'done' },
   { title: 'Полировка и демо-данные', status: 'done' },
+  { title: 'Восстановление из копии, фото в копии', status: 'done' },
+  { title: 'Блок «Сегодня» и напоминания о замерах', status: 'done' },
+  { title: 'Личные рекорды в упражнениях', status: 'done' },
 ];
 
 const mimeTypes = {
