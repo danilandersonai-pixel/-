@@ -9,16 +9,20 @@ import { Card } from '@/components/Card';
 import { ConfirmButton } from '@/components/ConfirmButton';
 import { icons } from '@/components/Icon';
 import { InfoRow } from '@/components/InfoRow';
+import { ReminderSettings } from '@/components/ReminderSettings';
 import { Screen } from '@/components/Screen';
+import { SecuritySettings } from '@/components/SecuritySettings';
 import { TrainerProfileForm } from '@/components/TrainerProfileForm';
 import { SegmentedControl } from '@/components/SegmentedControl';
-import { shareBackupFile } from '@/db/backupFiles';
+import { saveBackupNow } from '@/db/saveBackup';
+import { lastBackupAt } from '@/db/settings';
+import { useSetting } from '@/db/useSetting';
 import { fillDemoData } from '@/db/demo';
 import { countsText } from '@/i18n/backup';
 import { ru } from '@/i18n/ru';
 import { spacing } from '@/theme';
 import { getThemePreference, setThemePreference, subscribeThemePreference, type ThemePreference } from '@/theme/themePreference';
-import { fill } from '@/utils/format';
+import { fill, formatDateTime } from '@/utils/format';
 import { canShareFiles } from '@/utils/share';
 
 const b = ru.backup;
@@ -30,6 +34,7 @@ export default function SettingsScreen() {
   const [demoMessage, setDemoMessage] = useState<{ text: string; error: boolean } | null>(null);
   const [demoBusy, setDemoBusy] = useState(false);
   const themePreference = useSyncExternalStore(subscribeThemePreference, getThemePreference);
+  const lastBackup = useSetting(lastBackupAt);
   const themeOptions: { value: ThemePreference; label: string }[] = [
     { value: 'system', label: ru.settings.themeSystem },
     { value: 'dark', label: ru.settings.themeDark },
@@ -53,7 +58,7 @@ export default function SettingsScreen() {
     setBusy(true);
     setMessage(null);
     try {
-      const summary = await shareBackupFile();
+      const summary = await saveBackupNow();
       const missing = summary.missingPhotos > 0 ? ` ${fill(b.missingPhotos, { count: summary.missingPhotos })}` : '';
       setMessage({ text: `${b.contents}: ${countsText(summary)}.${missing}`, error: false });
     } catch {
@@ -83,8 +88,15 @@ export default function SettingsScreen() {
         <AppText variant="caption" color="textTertiary">
           {canShareFiles ? b.hint : b.webNote}
         </AppText>
+        <AppText variant="caption" color="textSecondary">
+          {lastBackup === null ? b.never : fill(b.last, { date: formatDateTime(new Date(lastBackup)) })}
+        </AppText>
         <Button title={b.restore} icon={icons.repeat} variant="secondary" onPress={() => router.push('/restore')} />
+        <Button title={ru.trash.open} icon={icons.trash} variant="secondary" onPress={() => router.push('/trash')} />
       </View>
+
+      <SecuritySettings />
+      <ReminderSettings />
 
       <View style={styles.section}>
         <AppText variant="section" color="textSecondary" style={styles.sectionTitle}>

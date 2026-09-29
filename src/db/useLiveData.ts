@@ -5,10 +5,10 @@ import { subscribeToChanges, type TableName } from './changes';
 export type LiveData<T> = { data: T | undefined; error: Error | undefined };
 
 /**
- * Загружает данные и перечитывает их при каждом изменении таблицы.
- * `load` должен быть стабильным (объявлен вне компонента или через useCallback).
+ * Загружает данные и перечитывает их при каждом изменении таблицы (или любой из списка).
+ * `load` и список таблиц должны быть стабильными (объявлены вне компонента или через useCallback).
  */
-export function useLiveData<T>(table: TableName, load: () => Promise<T>): LiveData<T> {
+export function useLiveData<T>(table: TableName | readonly TableName[], load: () => Promise<T>): LiveData<T> {
   const [state, setState] = useState<LiveData<T>>({ data: undefined, error: undefined });
 
   useEffect(() => {
@@ -21,10 +21,10 @@ export function useLiveData<T>(table: TableName, load: () => Promise<T>): LiveDa
       );
     };
     refresh();
-    const unsubscribe = subscribeToChanges(table, refresh);
+    const unsubscribers = (typeof table === 'string' ? [table] : table).map((name) => subscribeToChanges(name, refresh));
     return () => {
       active = false;
-      unsubscribe();
+      unsubscribers.forEach((unsubscribe) => unsubscribe());
     };
   }, [table, load]);
 

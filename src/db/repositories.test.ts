@@ -5,6 +5,7 @@ import { fillDemoData } from './demo';
 import { deleteGoal, getGoal, saveGoal } from './goals';
 import { deleteMembership, getMembership, saveMembership } from './memberships';
 import { deleteParq, getLatestParq, saveParq } from './parq';
+import { listTrash, restoreFromTrash } from './trash';
 import { getClient, listActiveClients, listArchivedClients, saveClient, setClientArchived } from './clients';
 import { getActiveConsent, giveConsent, revokeConsent } from './consents';
 import { getHealth, saveHealth } from './health';
@@ -231,6 +232,26 @@ describe('анкеты PAR-Q', () => {
     expect((await exportBackup()).tables.parq_forms.some((f) => f.id === 'q-new')).toBe(true);
     await deleteParq('q-new');
     expect((await getLatestParq('c-parq'))?.id).toBe('q-old');
+  });
+});
+
+describe('корзина', () => {
+  it('удалённое видно в корзине и возвращается обратно', async () => {
+    await makeClient('c-trash', 'Вера');
+    await saveMeasurement('m-trash', 'c-trash', { date: '2026-09-20', weight: 61.5 });
+    await saveParq('q-trash', 'c-trash', { date: '2026-09-20', version: 'v1', answers: '{}' });
+    await deleteMeasurement('m-trash');
+    await deleteParq('q-trash');
+    const trash = await listTrash();
+    const mine = trash.filter((i) => i.clientId === 'c-trash').map((i) => `${i.kind}:${i.id}:${i.clientName}`);
+    expect(mine.sort()).toEqual(['measurement:m-trash:Вера', 'parq:q-trash:Вера']);
+    expect(trash.find((i) => i.id === 'm-trash')).toMatchObject({ weight: 61.5, date: '2026-09-20' });
+
+    await restoreFromTrash('measurement', 'm-trash');
+    expect(await getMeasurement('m-trash')).not.toBeNull();
+    expect((await listTrash()).some((i) => i.id === 'm-trash')).toBe(false);
+    await restoreFromTrash('parq', 'q-trash');
+    expect((await getLatestParq('c-trash'))?.id).toBe('q-trash');
   });
 });
 

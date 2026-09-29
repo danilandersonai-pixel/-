@@ -3,8 +3,10 @@ import { Stack, ThemeProvider } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { View } from 'react-native';
 
+import { AppLock } from '@/components/AppLock';
 import { EmptyState } from '@/components/EmptyState';
 import { icons } from '@/components/Icon';
+import { WorkoutReminderSync } from '@/components/WorkoutReminderSync';
 import { useDatabaseReady } from '@/db/database';
 import { ru } from '@/i18n/ru';
 import { typography, useTheme } from '@/theme';
@@ -46,7 +48,8 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={getNavigationTheme(scheme)}>
-      {content}
+      <AppLock>{content}</AppLock>
+      {ready && !error ? <WorkoutReminderSync /> : null}
       <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
     </ThemeProvider>
   );

@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { ArchiveLink } from '@/components/ArchiveLink';
+import { BackupReminder } from '@/components/BackupReminder';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { ClientRow } from '@/components/ClientRow';
@@ -86,6 +87,7 @@ export default function ClientsScreen() {
       subtitle={`${clients.length} ${pluralRu(clients.length, ru.clients.countForms)}`}
       headerRight={<IconButton icon={icons.add} label={ru.clients.add} onPress={openNewClient} />}>
       <SearchField value={query} onChangeText={setQuery} placeholder={ru.clients.searchPlaceholder} />
+      {query.trim() === '' ? <BackupReminder oldestDataAt={Math.min(...clients.map((c) => c.createdAt))} /> : null}
       {showToday ? (
         <TodayCard
           todayIso={today}

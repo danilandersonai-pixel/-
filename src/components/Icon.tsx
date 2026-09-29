@@ -54,4 +54,5 @@ export const icons = {
   ticket: { ios: 'ticket', android: 'confirmation_number', web: 'confirmation_number' },
   timer: { ios: 'timer', android: 'timer', web: 'timer' },
   checklist: { ios: 'checklist', android: 'checklist', web: 'checklist' },
+  trash: { ios: 'trash', android: 'delete', web: 'delete' },
 } satisfies Record<string, IconName>;
