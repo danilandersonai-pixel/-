@@ -1,16 +1,13 @@
-// Выбор темы тренером: «как в системе», всегда тёмная или всегда светлая.
-// Хранится на телефоне в хранилище «ключ — значение» из expo-sqlite, никуда не отправляется.
+// Выбор темы тренером: «авто», всегда тёмная или всегда светлая. Хранится на телефоне.
 
-import Storage from 'expo-sqlite/kv-store';
+import { kv } from '@/db/kv';
+import { createSetting } from '@/lib/settingStore';
 
-import { createPreferenceStore, type ThemePreference } from './themePreferenceStore';
+import { parseThemePreference, type ThemePreference } from './themePreferenceStore';
 
-const KEY = 'themePreference';
+const setting = createSetting(kv, 'themePreference', parseThemePreference);
 
-const store = createPreferenceStore({
-  read: () => Storage.getItemSync(KEY),
-  write: (value) => Storage.setItemSync(KEY, value),
-});
-
-export const { getThemePreference, setThemePreference, subscribeThemePreference } = store;
+export const getThemePreference = setting.get;
+export const setThemePreference = setting.set;
+export const subscribeThemePreference = setting.subscribe;
 export type { ThemePreference };

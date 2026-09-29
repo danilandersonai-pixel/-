@@ -10,6 +10,7 @@ import { ConfirmButton } from '@/components/ConfirmButton';
 import { icons } from '@/components/Icon';
 import { InfoRow } from '@/components/InfoRow';
 import { Screen } from '@/components/Screen';
+import { TrainerProfileForm } from '@/components/TrainerProfileForm';
 import { SegmentedControl } from '@/components/SegmentedControl';
 import { shareBackupFile } from '@/db/backupFiles';
 import { fillDemoData } from '@/db/demo';
@@ -64,6 +65,7 @@ export default function SettingsScreen() {
 
   return (
     <Screen title={ru.settings.title}>
+      <TrainerProfileForm />
       <Card title={ru.settings.dataSection} footer={ru.settings.dataHint}>
         <InfoRow label={ru.settings.dataStorage} value={ru.settings.dataStorageValue} />
       </Card>

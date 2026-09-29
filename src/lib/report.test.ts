@@ -1,6 +1,6 @@
 import type { Client, Measurement, Photo, Workout } from '@/db/schema';
 
-import { buildReportData, escapeHtml, lineChartSvg, reportBody, reportFileName, reportPeriod } from './report';
+import { buildReportData, escapeHtml, lineChartSvg, parseCustomPeriod, reportBody, reportFileName, reportPeriod } from './report';
 
 const client: Client = {
   id: 'c1',
@@ -60,6 +60,18 @@ describe('период отчёта', () => {
     expect(reportPeriod('quarter', '2026-09-29', null).from).toBe('2026-06-30');
     expect(reportPeriod('all', '2026-09-29', '2026-01-10')).toEqual({ from: '2026-01-10', to: '2026-09-29' });
   });
+
+  it('свои даты', () => {
+    const custom = parseCustomPeriod('01.09.2026', '15.09.2026');
+    expect(custom).toEqual({ from: '2026-09-01', to: '2026-09-15' });
+    expect(reportPeriod('custom', '2026-09-29', null, { from: '2026-09-01', to: '2026-09-15' })).toEqual(custom);
+    // пока даты не введены — как «месяц»
+    expect(reportPeriod('custom', '2026-09-29', null)).toEqual({ from: '2026-08-30', to: '2026-09-29' });
+    expect(parseCustomPeriod('01.09', '15.09.2026')).toEqual({ problem: 'invalid' });
+    expect(parseCustomPeriod('31.02.2026', '15.09.2026')).toEqual({ problem: 'invalid' });
+    expect(parseCustomPeriod('20.09.2026', '15.09.2026')).toEqual({ problem: 'order' });
+    expect(parseCustomPeriod('15.09.2026', '15.09.2026')).toEqual({ from: '2026-09-15', to: '2026-09-15' });
+  });
 });
 
 describe('данные отчёта', () => {
@@ -102,6 +114,12 @@ describe('данные отчёта', () => {
     expect(html).toContain('<svg');
     expect(html).toContain('src="data:b"');
     expect(html).toContain('30.08.2026 — 29.09.2026');
+    expect(html).not.toContain('Тренер:');
+  });
+
+  it('HTML: строка тренера экранируется', () => {
+    const html = reportBody(data, null, 'Иван <Петров> · @ivan');
+    expect(html).toContain('Тренер: Иван &lt;Петров&gt; · @ivan');
   });
 });
 

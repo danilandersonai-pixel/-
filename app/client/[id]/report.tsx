@@ -11,27 +11,32 @@ import { icons } from '@/components/Icon';
 import { InfoRow } from '@/components/InfoRow';
 import { Notice } from '@/components/Notice';
 import { ReportPreview } from '@/components/ReportPreview';
+import { TextField } from '@/components/TextField';
+import { trainerProfile } from '@/db/settings';
 import { useClient } from '@/db/useClients';
 import { useMeasurements } from '@/db/useMeasurements';
 import { useNutritionPlans } from '@/db/useNutrition';
+import { useSetting } from '@/db/useSetting';
 import { usePhotos } from '@/db/usePhotos';
 import { useWorkouts } from '@/db/useWorkouts';
 import { ru } from '@/i18n/ru';
 import {
   buildReportData,
+  parseCustomPeriod,
   reportBody,
   reportDocument,
   reportFileName,
   reportPeriod,
   type ReportPeriodPreset,
 } from '@/lib/report';
+import { trainerContacts } from '@/lib/trainer';
 import { spacing, useTheme } from '@/theme';
-import { isoToRuDate, toIsoDate } from '@/utils/date';
+import { addDays, isoToRuDate, maskDateInput, toIsoDate } from '@/utils/date';
 import { formatMeasure } from '@/utils/format';
 import { canShareFiles, imageAsDataUri, sharePdf } from '@/utils/share';
 
 const t = ru.report;
-const presets: readonly ReportPeriodPreset[] = ['month', 'quarter', 'all'];
+const presets: readonly ReportPeriodPreset[] = ['month', 'quarter', 'all', 'custom'];
 
 export default function ReportScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -42,6 +47,9 @@ export default function ReportScreen() {
   const { data: plans } = useNutritionPlans(id);
   const { data: photos } = usePhotos(id);
   const [preset, setPreset] = useState<ReportPeriodPreset>('month');
+  const [customFrom, setCustomFrom] = useState(() => isoToRuDate(addDays(toIsoDate(new Date()), -30)));
+  const [customTo, setCustomTo] = useState(() => isoToRuDate(toIsoDate(new Date())));
+  const trainer = trainerContacts(useSetting(trainerProfile));
   const [withPhotos, setWithPhotos] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -52,12 +60,15 @@ export default function ReportScreen() {
 
   const today = toIsoDate(new Date());
   const earliest = [...measurements.map((m) => m.date), ...workouts.map((w) => w.date)].sort()[0] ?? null;
-  const { from, to } = reportPeriod(preset, today, earliest);
+  const custom = parseCustomPeriod(customFrom, customTo);
+  const customProblem = preset === 'custom' && 'problem' in custom ? custom.problem : null;
+  const { from, to } = reportPeriod(preset, today, earliest, 'problem' in custom ? undefined : custom);
   const data = buildReportData({ client, measurements, workouts, plans, photos, from, to });
   const includePhotos = withPhotos && data.photos !== null;
   const previewBody = reportBody(
     data,
     includePhotos && data.photos ? { before: data.photos.before.uri, after: data.photos.after.uri } : null,
+    trainer,
   );
   const isEmpty = data.rows.length === 0 && data.workouts.done === 0;
 
@@ -69,7 +80,7 @@ export default function ReportScreen() {
         includePhotos && data.photos
           ? { before: await imageAsDataUri(data.photos.before.uri), after: await imageAsDataUri(data.photos.after.uri) }
           : null;
-      await sharePdf(reportDocument(reportBody(data, sources)), reportFileName(data.clientName, today));
+      await sharePdf(reportDocument(reportBody(data, sources, trainer)), reportFileName(data.clientName, today));
     } catch {
       setError(t.error);
     } finally {
@@ -90,9 +101,37 @@ export default function ReportScreen() {
           value={preset}
           onChange={setPreset}
         />
-        <AppText variant="callout" color="textSecondary">
-          {`${isoToRuDate(from)} — ${isoToRuDate(to)}`}
-        </AppText>
+        {preset === 'custom' ? (
+          <View style={styles.dates}>
+            <View style={styles.flex}>
+              <TextField
+                label={t.from}
+                value={customFrom}
+                onChangeText={(text) => setCustomFrom(maskDateInput(text))}
+                keyboardType="number-pad"
+                placeholder="ДД.ММ.ГГГГ"
+              />
+            </View>
+            <View style={styles.flex}>
+              <TextField
+                label={t.to}
+                value={customTo}
+                onChangeText={(text) => setCustomTo(maskDateInput(text))}
+                keyboardType="number-pad"
+                placeholder="ДД.ММ.ГГГГ"
+              />
+            </View>
+          </View>
+        ) : null}
+        {customProblem ? (
+          <AppText variant="callout" color="danger">
+            {customProblem === 'order' ? t.periodOrder : t.periodInvalid}
+          </AppText>
+        ) : (
+          <AppText variant="callout" color="textSecondary">
+            {`${isoToRuDate(from)} — ${isoToRuDate(to)}`}
+          </AppText>
+        )}
       </View>
       {data.photos ? (
         <View style={styles.switchRow}>
@@ -131,7 +170,12 @@ export default function ReportScreen() {
               {error}
             </AppText>
           ) : null}
-          <Button title={busy ? t.creating : t.create} icon={icons.doc} onPress={() => void create()} disabled={busy} />
+          <Button
+            title={busy ? t.creating : t.create}
+            icon={icons.doc}
+            onPress={() => void create()}
+            disabled={busy || customProblem !== null}
+          />
         </>
       ) : (
         <>
@@ -146,6 +190,10 @@ export default function ReportScreen() {
 const styles = StyleSheet.create({
   section: {
     gap: spacing.sm,
+  },
+  dates: {
+    flexDirection: 'row',
+    gap: spacing.md,
   },
   switchRow: {
     flexDirection: 'row',

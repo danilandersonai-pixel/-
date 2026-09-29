@@ -3,24 +3,47 @@
 import type { Client, Measurement, NutritionPlan, Photo, Workout } from '@/db/schema';
 import { ru } from '@/i18n/ru';
 import { printColors } from '@/theme/print';
-import { addDays, isoToRuDate } from '@/utils/date';
+import { addDays, isoToRuDate, parseRuDate } from '@/utils/date';
 import { fill, formatInteger, formatMeasure, lowerFirst } from '@/utils/format';
 
 import { clientFullName } from './clients';
 import { niceScale, progressMetrics, progressSeries, type ProgressMetricId, type ProgressPoint } from './progress';
 import { workoutStats } from './workouts';
 
-export type ReportPeriodPreset = 'month' | 'quarter' | 'all';
+export type ReportPeriodPreset = 'month' | 'quarter' | 'all' | 'custom';
 
-/** Границы периода «ГГГГ-ММ-ДД». Для «всё время» — с первого замера или тренировки. */
-export function reportPeriod(preset: ReportPeriodPreset, todayIso: string, earliestIso: string | null): { from: string; to: string } {
-  if (preset === 'month') {
+export type ReportPeriod = { from: string; to: string };
+
+/**
+ * Границы периода «ГГГГ-ММ-ДД». Для «всё время» — с первого замера или тренировки.
+ * Для «своих дат» — custom (уже проверенный parseCustomPeriod); без него — как «месяц».
+ */
+export function reportPeriod(
+  preset: ReportPeriodPreset,
+  todayIso: string,
+  earliestIso: string | null,
+  custom?: ReportPeriod,
+): ReportPeriod {
+  if (preset === 'custom' && custom) {
+    return custom;
+  }
+  if (preset === 'month' || preset === 'custom') {
     return { from: addDays(todayIso, -30), to: todayIso };
   }
   if (preset === 'quarter') {
     return { from: addDays(todayIso, -91), to: todayIso };
   }
   return { from: earliestIso ?? todayIso, to: todayIso };
+}
+
+/** Свои даты отчёта из полей «с» и «по» (ДД.ММ.ГГГГ) */
+export function parseCustomPeriod(fromText: string, toText: string): ReportPeriod | { problem: 'invalid' | 'order' } {
+  const from = parseRuDate(fromText);
+  const to = parseRuDate(toText);
+  if (!from || !to) {
+    return { problem: 'invalid' };
+  }
+  return from > to ? { problem: 'order' } : { from, to };
 }
 
 export type ReportRow = {
@@ -220,12 +243,20 @@ export const reportCss = `
  * Тело отчёта (внутри .rpt). photoSources — фото «до/после» в виде data:-строк,
  * их готовит приложение: файлы с телефона в PDF вставляются только так.
  */
-export function reportBody(data: ReportData, photoSources: { before: string; after: string } | null): string {
+export function reportBody(
+  data: ReportData,
+  photoSources: { before: string; after: string } | null,
+  /** Имя и контакты тренера одной строкой (trainerContacts) или null */
+  trainer: string | null = null,
+): string {
   const period = `${isoToRuDate(data.from)} — ${isoToRuDate(data.to)}`;
   const parts: string[] = [];
   parts.push(`<h1>${t.title}</h1>`);
   parts.push(`<div><b>${escapeHtml(data.clientName)}</b>${data.goal ? ` · <span class="muted">${escapeHtml(data.goal)}</span>` : ''}</div>`);
   parts.push(`<div class="muted">${fill(t.period, { period })}</div>`);
+  if (trainer) {
+    parts.push(`<div class="muted">${escapeHtml(fill(t.trainer, { contacts: trainer }))}</div>`);
+  }
 
   parts.push(`<h2>${t.bodyTitle}</h2>`);
   if (data.rows.length === 0) {
