@@ -35,4 +35,6 @@ export const icons = {
   arrowDown: { ios: 'arrow.down', android: 'arrow_downward', web: 'arrow_downward' },
   arrowUp: { ios: 'arrow.up', android: 'arrow_upward', web: 'arrow_upward' },
   help: { ios: 'questionmark.circle', android: 'help', web: 'help' },
+  chart: { ios: 'chart.xyaxis.line', android: 'show_chart', web: 'show_chart' },
+  photo: { ios: 'photo.on.rectangle', android: 'photo_library', web: 'photo_library' },
 } satisfies Record<string, IconName>;

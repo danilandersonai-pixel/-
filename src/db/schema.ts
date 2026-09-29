@@ -119,3 +119,24 @@ export const measurements = sqliteTable(
 export type Measurement = typeof measurements.$inferSelect;
 export type MeasurementFields = Pick<Measurement, 'date' | 'weight'> &
   Partial<Omit<Measurement, 'id' | 'clientId' | 'date' | 'weight' | 'deletedAt' | 'createdAt' | 'updatedAt'>>;
+
+/** Фото «до/после». uri — файл в папке приложения (в браузерном превью — сжатая картинка data:). */
+export const photos = sqliteTable(
+  'photos',
+  {
+    id: text('id').primaryKey(),
+    clientId: text('client_id')
+      .notNull()
+      .references(() => clients.id),
+    /** ГГГГ-ММ-ДД */
+    date: text('date').notNull(),
+    angle: text('angle', { enum: ['front', 'side', 'back'] }).notNull(),
+    uri: text('uri').notNull(),
+    deletedAt: integer('deleted_at'),
+    ...timestamps,
+  },
+  (table) => [index('photos_client_date_idx').on(table.clientId, table.date)],
+);
+
+export type Photo = typeof photos.$inferSelect;
+export type PhotoAngle = Photo['angle'];

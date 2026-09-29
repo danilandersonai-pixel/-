@@ -23,6 +23,8 @@ export type Palette = {
   danger: string;
   /** Предупреждения о точности расчёта */
   warning: string;
+  /** Линия графиков (проверена на контраст и различимость для обеих тем) */
+  chartLine: string;
 };
 
 const light: Palette = {
@@ -39,6 +41,7 @@ const light: Palette = {
   success: '#15803D',
   danger: '#DC2626',
   warning: '#B45309',
+  chartLine: '#4F46E5',
 };
 
 const dark: Palette = {
@@ -55,6 +58,7 @@ const dark: Palette = {
   success: '#4ADE80',
   danger: '#F87171',
   warning: '#FBBF24',
+  chartLine: '#8580FA',
 };
 
 export const palettes: Record<ColorScheme, Palette> = { light, dark };

@@ -33,7 +33,15 @@
           "imageWidth": 76
         }
       ],
-      "expo-sqlite"
+      "expo-sqlite",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Нужно, чтобы добавлять фото «до/после» подопечных.",
+          "cameraPermission": "Нужно, чтобы снимать фото «до/после» подопечных.",
+          "microphonePermission": false
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

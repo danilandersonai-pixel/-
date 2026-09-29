@@ -37,6 +37,12 @@ export function ClientMeasurementsTab({ client }: { client: Client }) {
   return (
     <View style={styles.tab}>
       <Button title={ru.measurement.add} icon={icons.add} onPress={openNew} />
+      <Button
+        title={ru.progress.open}
+        icon={icons.chart}
+        variant="secondary"
+        onPress={() => router.push({ pathname: '/client/[id]/progress', params: { id: client.id } })}
+      />
       <Card>
         {measurements.map((m, index) => {
           const composition = compositions[index];
