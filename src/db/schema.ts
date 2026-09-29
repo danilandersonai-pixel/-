@@ -237,3 +237,30 @@ export const nutritionPlans = sqliteTable(
 export type NutritionPlan = typeof nutritionPlans.$inferSelect;
 export type NutritionFields = Pick<NutritionPlan, 'startDate'> &
   Partial<Pick<NutritionPlan, 'calories' | 'protein' | 'fat' | 'carbs' | 'notes'>>;
+
+/**
+ * Цель подопечного: показатель, целевое значение и (по желанию) срок. Одна действующая цель —
+ * последняя неудалённая. Прогресс и прогноз не храним: они считаются из замеров при показе.
+ */
+export const goals = sqliteTable(
+  'goals',
+  {
+    id: text('id').primaryKey(),
+    clientId: text('client_id')
+      .notNull()
+      .references(() => clients.id),
+    metric: text('metric', { enum: ['weight', 'bodyFat', 'fatMass', 'leanMass', 'waist', 'hips'] }).notNull(),
+    targetValue: real('target_value').notNull(),
+    /** Срок, ГГГГ-ММ-ДД; null — без срока */
+    targetDate: text('target_date'),
+    /** С какого дня считаем путь к цели, ГГГГ-ММ-ДД — обычно день постановки цели */
+    startDate: text('start_date').notNull(),
+    deletedAt: integer('deleted_at'),
+    ...timestamps,
+  },
+  (table) => [index('goals_client_idx').on(table.clientId)],
+);
+
+export type Goal = typeof goals.$inferSelect;
+export type GoalMetric = Goal['metric'];
+export type GoalFields = Pick<Goal, 'metric' | 'targetValue' | 'startDate'> & Partial<Pick<Goal, 'targetDate'>>;

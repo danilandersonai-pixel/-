@@ -2,6 +2,7 @@
 
 import { applyRestorePlan, exportBackup, planBackupRestore } from './backup';
 import { fillDemoData } from './demo';
+import { deleteGoal, getGoal, saveGoal } from './goals';
 import { getClient, listActiveClients, listArchivedClients, saveClient, setClientArchived } from './clients';
 import { getActiveConsent, giveConsent, revokeConsent } from './consents';
 import { getHealth, saveHealth } from './health';
@@ -176,6 +177,20 @@ describe('питание и резервная копия', () => {
     expect(backup.tables.sets.length).toBe(3);
     expect(backup.tables.nutrition_plans.length).toBe(2);
     expect(backup.tables.consents.length).toBe(2);
+  });
+});
+
+describe('цели', () => {
+  it('действующая — последняя неудалённая, правка и удаление', async () => {
+    await makeClient('c-goal', 'Вера');
+    expect(await getGoal('c-goal')).toBeNull();
+    await saveGoal('g1', 'c-goal', { metric: 'weight', targetValue: 60, startDate: '2026-09-01' });
+    await saveGoal('g1', 'c-goal', { metric: 'bodyFat', targetValue: 22, startDate: '2026-09-01', targetDate: '2027-01-01' });
+    expect(await getGoal('c-goal')).toMatchObject({ id: 'g1', metric: 'bodyFat', targetValue: 22, targetDate: '2027-01-01' });
+    await deleteGoal('g1');
+    expect(await getGoal('c-goal')).toBeNull();
+    // строка осталась — для резервной копии и будущей синхронизации
+    expect((await exportBackup()).tables.goals.some((g) => g.id === 'g1')).toBe(true);
   });
 });
 

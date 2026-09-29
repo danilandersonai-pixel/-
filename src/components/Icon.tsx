@@ -49,4 +49,6 @@ export const icons = {
   chat: { ios: 'message', android: 'chat', web: 'chat' },
   send: { ios: 'paperplane', android: 'send', web: 'send' },
   table: { ios: 'tablecells', android: 'table_chart', web: 'table_chart' },
+  compare: { ios: 'arrow.left.arrow.right', android: 'compare_arrows', web: 'compare_arrows' },
+  goal: { ios: 'flag', android: 'flag', web: 'flag' },
 } satisfies Record<string, IconName>;

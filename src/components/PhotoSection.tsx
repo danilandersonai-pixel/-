@@ -9,7 +9,9 @@ import { Button } from '@/components/Button';
 import { Chips } from '@/components/Chips';
 import { EmptyState } from '@/components/EmptyState';
 import { icons } from '@/components/Icon';
+import { PhotoCompareSlider } from '@/components/PhotoCompareSlider';
 import { PhotoFrame } from '@/components/PhotoFrame';
+import { SegmentedControl } from '@/components/SegmentedControl';
 import type { Photo, PhotoAngle } from '@/db/schema';
 import { ru } from '@/i18n/ru';
 import { radius, spacing, useTheme } from '@/theme';
@@ -30,6 +32,7 @@ export function PhotoSection({ clientId, photos }: PhotoSectionProps) {
   const [angle, setAngle] = useState<PhotoAngle>(photos[0]?.angle ?? 'front');
   const [adding, setAdding] = useState(false);
   const [choice, setChoice] = useState<{ before?: string; after?: string }>({});
+  const [mode, setMode] = useState<'side' | 'slider'>('side');
 
   const ofAngle = photos.filter((photo) => photo.angle === angle);
   // По умолчанию — самое первое и самое последнее фото ракурса
@@ -74,18 +77,38 @@ export function PhotoSection({ clientId, photos }: PhotoSectionProps) {
         value={angle}
         onChange={changeAngle}
       />
-      <View style={styles.compare}>
-        <PhotoFrame
-          uri={before?.uri ?? null}
-          caption={before ? `${t.before} · ${isoToRuDate(before.date)}` : t.before}
-          emptyText={t.noAngle}
+      {before && after ? (
+        <SegmentedControl
+          label={t.compareMode}
+          options={[
+            { value: 'side', label: t.modeSide },
+            { value: 'slider', label: t.modeSlider },
+          ]}
+          value={mode}
+          onChange={setMode}
         />
-        <PhotoFrame
-          uri={after?.uri ?? null}
-          caption={after ? `${t.after} · ${isoToRuDate(after.date)}` : t.after}
-          emptyText={ofAngle.length === 1 ? t.onePhoto : t.noAngle}
+      ) : null}
+      {before && after && mode === 'slider' ? (
+        <PhotoCompareSlider
+          beforeUri={before.uri}
+          afterUri={after.uri}
+          beforeCaption={`${t.before} · ${isoToRuDate(before.date)}`}
+          afterCaption={`${t.after} · ${isoToRuDate(after.date)}`}
         />
-      </View>
+      ) : (
+        <View style={styles.compare}>
+          <PhotoFrame
+            uri={before?.uri ?? null}
+            caption={before ? `${t.before} · ${isoToRuDate(before.date)}` : t.before}
+            emptyText={t.noAngle}
+          />
+          <PhotoFrame
+            uri={after?.uri ?? null}
+            caption={after ? `${t.after} · ${isoToRuDate(after.date)}` : t.after}
+            emptyText={ofAngle.length === 1 ? t.onePhoto : t.noAngle}
+          />
+        </View>
+      )}
       {ofAngle.length > 2 ? (
         <>
           <AppText variant="caption" color="textSecondary">

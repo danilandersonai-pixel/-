@@ -53,7 +53,7 @@ describe('резервная копия: формат', () => {
   it('содержит версию формата и дату', () => {
     const backup = makeBackup(empty(), new Date('2026-09-29T10:00:00Z'));
     expect(backup).toMatchObject({ app: 'sport-tracker', version: 2, exportedAt: '2026-09-29T10:00:00.000Z' });
-    expect(Object.keys(backup.tables)).toHaveLength(9);
+    expect(Object.keys(backup.tables)).toHaveLength(10);
   });
 
   it('считает записи без удалённых', () => {

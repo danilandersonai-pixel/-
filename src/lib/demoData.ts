@@ -4,6 +4,7 @@
 import type {
   ClientFields,
   ExerciseInput,
+  GoalFields,
   HealthFields,
   MeasurementFields,
   NutritionFields,
@@ -19,6 +20,7 @@ export type DemoClient = {
   measurements: { id: string; fields: MeasurementFields }[];
   workouts: { id: string; fields: WorkoutFields; exercises: ExerciseInput[] }[];
   nutrition: NutritionFields | null;
+  goal: GoalFields | null;
 };
 
 export const DEMO_NOTE = 'Пример — вымышленный подопечный. Можно перенести в архив.';
@@ -128,6 +130,13 @@ export function buildDemoData(todayIso: string, makeId: () => string): DemoClien
       carbs: 190,
       notes: 'Белок в каждом приёме пищи, сладкое — не чаще раза в неделю.',
     },
+    // Цель поставлена в день первого замера — видно путь и прогноз
+    goal: {
+      metric: 'bodyFat',
+      targetValue: 20,
+      startDate: addDays(todayIso, -(annaCount - 1) * 14),
+      targetDate: addDays(todayIso, 150),
+    },
   };
 
   // Игорь: набор массы, раз в месяц только обхваты — считается по методу ВМС
@@ -176,6 +185,7 @@ export function buildDemoData(todayIso: string, makeId: () => string): DemoClien
       carbs: 370,
       notes: 'Профицит около 300 ккал, взвешиваться раз в неделю утром.',
     },
+    goal: null,
   };
 
   // Ольга: здоровье и тонус, два замера (последний 35 дней назад — пора новый), есть противопоказание
@@ -206,6 +216,7 @@ export function buildDemoData(todayIso: string, makeId: () => string): DemoClien
       { name: 'Ягодичный мост', reps: 15, weight: 20, step: 2.5, sets: 3 },
     ]),
     nutrition: null,
+    goal: null,
   };
 
   return [anna, igor, olga];

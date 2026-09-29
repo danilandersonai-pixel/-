@@ -3,13 +3,16 @@ import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { AppText } from '@/components/AppText';
+import { ActionTile } from '@/components/ActionTile';
 import { Button } from '@/components/Button';
+import { GoalCard } from '@/components/GoalCard';
 import { Card } from '@/components/Card';
 import { EmptyState } from '@/components/EmptyState';
 import { icons } from '@/components/Icon';
 import { MeasurementRow } from '@/components/MeasurementRow';
 import { Notice } from '@/components/Notice';
 import type { Client } from '@/db/schema';
+import { useGoal } from '@/db/useGoal';
 import { useMeasurements } from '@/db/useMeasurements';
 import { ru } from '@/i18n/ru';
 import { compositionDelta } from '@/lib/calc/composition';
@@ -25,6 +28,7 @@ import { canShareFiles, shareTextFile } from '@/utils/share';
 /** Вкладка «Замеры»: история и кнопка нового замера */
 export function ClientMeasurementsTab({ client }: { client: Client }) {
   const { data: measurements } = useMeasurements(client.id);
+  const { data: goal } = useGoal(client.id);
   const [csvMessage, setCsvMessage] = useState<string | null>(null);
   const [csvBusy, setCsvBusy] = useState(false);
   const openNew = () => router.push({ pathname: '/client/[id]/measure', params: { id: client.id } });
@@ -72,26 +76,43 @@ export function ClientMeasurementsTab({ client }: { client: Client }) {
           text={fill(ru.today.dueText, { days: `${overdue} ${pluralRu(overdue, ru.today.dayForms)}` })}
         />
       ) : null}
-      <Button title={ru.measurement.add} icon={icons.add} onPress={openNew} />
-      <Button
-        title={ru.progress.open}
-        icon={icons.chart}
-        variant="secondary"
-        onPress={() => router.push({ pathname: '/client/[id]/progress', params: { id: client.id } })}
-      />
-      <Button
-        title={ru.report.open}
-        icon={icons.doc}
-        variant="secondary"
-        onPress={() => router.push({ pathname: '/client/[id]/report', params: { id: client.id } })}
-      />
-      <Button
-        title={csvBusy ? ru.csv.exporting : ru.csv.export}
-        icon={icons.table}
-        variant="secondary"
-        onPress={() => void exportCsv()}
-        disabled={csvBusy}
-      />
+      <View style={styles.row}>
+        <View style={styles.main}>
+          <Button title={ru.measurement.add} icon={icons.add} onPress={openNew} />
+        </View>
+        <View style={styles.flex}>
+          <Button
+            title={ru.quickWeight.open}
+            variant="secondary"
+            onPress={() => router.push({ pathname: '/client/[id]/quick-weight', params: { id: client.id } })}
+          />
+        </View>
+      </View>
+      {goal !== undefined ? <GoalCard client={client} measurements={measurements} goal={goal} /> : null}
+      <View style={styles.grid}>
+        <ActionTile
+          icon={icons.chart}
+          label={ru.progress.openShort}
+          onPress={() => router.push({ pathname: '/client/[id]/progress', params: { id: client.id } })}
+        />
+        <ActionTile
+          icon={icons.compare}
+          label={ru.compare.open}
+          onPress={() => router.push({ pathname: '/client/[id]/compare', params: { id: client.id } })}
+          disabled={measurements.length < 2}
+        />
+        <ActionTile
+          icon={icons.doc}
+          label={ru.report.openShort}
+          onPress={() => router.push({ pathname: '/client/[id]/report', params: { id: client.id } })}
+        />
+        <ActionTile
+          icon={icons.table}
+          label={csvBusy ? ru.csv.exporting : ru.csv.exportShort}
+          onPress={() => void exportCsv()}
+          disabled={csvBusy}
+        />
+      </View>
       {csvMessage ? (
         <AppText variant="caption" color="textSecondary">
           {csvMessage}
@@ -122,5 +143,20 @@ export function ClientMeasurementsTab({ client }: { client: Client }) {
 const styles = StyleSheet.create({
   tab: {
     gap: spacing.lg,
+  },
+  row: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  main: {
+    flex: 3,
+  },
+  flex: {
+    flex: 2,
+  },
+  grid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
   },
 });

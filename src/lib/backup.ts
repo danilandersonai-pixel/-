@@ -21,6 +21,7 @@ export const backupTables = [
   'workout_exercises',
   'sets',
   'nutrition_plans',
+  'goals',
 ] as const;
 
 export type BackupTable = (typeof backupTables)[number];
@@ -128,12 +129,14 @@ const requiredFields: Record<BackupTable, Record<string, FieldType>> = {
   workout_exercises: { workoutId: 'string', position: 'number', name: 'string' },
   sets: { exerciseId: 'string', position: 'number' },
   nutrition_plans: { clientId: 'string', startDate: 'string' },
+  goals: { clientId: 'string', metric: 'string', targetValue: 'number', startDate: 'string' },
 };
 
 const allowedValues: Partial<Record<BackupTable, Record<string, readonly (string | null)[]>>> = {
   clients: { gender: ['male', 'female', null] },
   photos: { angle: ['front', 'side', 'back'] },
   workouts: { status: ['planned', 'done'] },
+  goals: { metric: ['weight', 'bodyFat', 'fatMass', 'leanMass', 'waist', 'hips'] },
 };
 
 function isValidRow(table: BackupTable, row: BackupRow): boolean {
@@ -194,6 +197,7 @@ const parentOf: Partial<Record<BackupTable, { field: string; table: BackupTable 
   photos: { field: 'clientId', table: 'clients' },
   workouts: { field: 'clientId', table: 'clients' },
   nutrition_plans: { field: 'clientId', table: 'clients' },
+  goals: { field: 'clientId', table: 'clients' },
 };
 
 function byId(rows: BackupRow[]): Map<string, BackupRow> {
