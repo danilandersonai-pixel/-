@@ -4,9 +4,9 @@ import { sortClients } from '@/lib/clients';
 
 import { notifyChange } from './changes';
 import type { Client, ClientFields } from './schema';
-import { createWebTable, getBrowserStorage } from './webTable';
+import { browserTable } from './webTable';
 
-const table = createWebTable<Client>('clients', getBrowserStorage());
+const table = browserTable<Client>('clients');
 
 const api = {
   async listActiveClients(): Promise<Client[]> {

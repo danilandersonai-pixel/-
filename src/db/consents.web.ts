@@ -5,9 +5,9 @@ import { CONSENT_VERSION } from '@/lib/consent';
 import { notifyChange } from './changes';
 import { newId } from './ids';
 import type { Consent } from './schema';
-import { createWebTable, getBrowserStorage } from './webTable';
+import { browserTable } from './webTable';
 
-const table = createWebTable<Consent>('consents', getBrowserStorage());
+const table = browserTable<Consent>('consents');
 
 const api = {
   async getActiveConsent(clientId: string): Promise<Consent | null> {

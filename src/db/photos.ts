@@ -3,15 +3,20 @@ import { and, asc, eq, isNull } from 'drizzle-orm';
 import { notifyChange } from './changes';
 import { db } from './database';
 import { newId } from './ids';
+import { resolvePhotoUri } from './photoFiles';
 import { photos, type Photo, type PhotoAngle } from './schema';
 
-/** Фото подопечного, старые сначала — так проще сравнивать «до» и «после» */
+/**
+ * Фото подопечного, старые сначала — так проще сравнивать «до» и «после».
+ * uri уже готов для показа: путь из базы превращён в полный путь на этом телефоне.
+ */
 export async function listPhotos(clientId: string): Promise<Photo[]> {
-  return db
+  const rows = await db
     .select()
     .from(photos)
     .where(and(eq(photos.clientId, clientId), isNull(photos.deletedAt)))
     .orderBy(asc(photos.date), asc(photos.createdAt));
+  return rows.map((row) => ({ ...row, uri: resolvePhotoUri(row.uri) }));
 }
 
 export async function addPhoto(clientId: string, date: string, angle: PhotoAngle, uri: string): Promise<string> {

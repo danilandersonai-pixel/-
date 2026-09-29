@@ -1,6 +1,6 @@
 // Функции работы с данными (src/db/*.ts) на настоящем SQLite с миграциями приложения.
 
-import { exportBackup } from './backup';
+import { applyRestorePlan, exportBackup, planBackupRestore } from './backup';
 import { fillDemoData } from './demo';
 import { getClient, listActiveClients, listArchivedClients, saveClient, setClientArchived } from './clients';
 import { getActiveConsent, giveConsent, revokeConsent } from './consents';
@@ -22,6 +22,10 @@ jest.mock('./database', () => {
   const { createTestDatabase } = jest.requireActual('./testing/testDatabase');
   return { db: createTestDatabase().db };
 });
+
+jest.mock('./photoFiles', () => ({
+  resolvePhotoUri: (stored: string) => `resolved:${stored}`,
+}));
 
 jest.mock('./ids', () => ({
   newId: () => jest.requireActual('node:crypto').randomUUID(),
@@ -92,9 +96,11 @@ describe('замеры', () => {
 describe('фото', () => {
   it('старые сначала, удаление скрывает', async () => {
     await makeClient('c-p', 'Пётр');
-    const later = await addPhoto('c-p', '2026-09-20', 'front', 'file:///b.jpg');
-    const earlier = await addPhoto('c-p', '2026-09-01', 'front', 'file:///a.jpg');
+    const later = await addPhoto('c-p', '2026-09-20', 'front', 'photos/b.jpg');
+    const earlier = await addPhoto('c-p', '2026-09-01', 'front', 'photos/a.jpg');
     expect((await listPhotos('c-p')).map((p) => p.id)).toEqual([earlier, later]);
+    // путь из базы превращается в адрес для показа на этом телефоне
+    expect((await listPhotos('c-p'))[0].uri).toBe('resolved:photos/a.jpg');
     await deletePhoto(earlier);
     expect((await listPhotos('c-p')).map((p) => p.id)).toEqual([later]);
   });
@@ -155,6 +161,73 @@ describe('питание и резервная копия', () => {
     expect(backup.tables.sets.length).toBe(1);
     expect(backup.tables.nutrition_plans.length).toBe(2);
     expect(backup.tables.consents.length).toBe(2);
+  });
+});
+
+describe('восстановление из резервной копии', () => {
+  it('сливает копию с данными на телефоне и повтор ничего не меняет', async () => {
+    const backup = await exportBackup();
+    const keepUri = (row: Record<string, unknown>) => row.uri as string;
+
+    // После копии на телефоне что-то изменили, а что-то потеряли
+    await saveClient('c-b', { firstName: 'Юлия', goal: 'Изменено после копии' });
+    await saveMeasurement('m-new', 'c-m', { date: '2026-09-28', weight: 67 });
+
+    // Восстановление той же копии: изменения после копии не откатываются
+    const plan = await planBackupRestore(backup, keepUri);
+    expect(plan.actions).toEqual([]);
+    expect((await getClient('c-b'))?.goal).toBe('Изменено после копии');
+    expect(await getMeasurement('m-new')).not.toBeNull();
+
+    // Копия с более новой версией тренировки: упражнения берутся из копии
+    const details = await getWorkoutDetails('w2');
+    expect(details).not.toBeNull();
+    const newer = {
+      ...backup,
+      tables: {
+        ...backup.tables,
+        workouts: backup.tables.workouts.map((w) => (w.id === 'w2' ? { ...w, notes: 'Из копии', updatedAt: Date.now() + 1000 } : w)),
+        workout_exercises: [
+          ...backup.tables.workout_exercises,
+          { id: 'e-backup', workoutId: 'w2', position: 0, name: 'Тяга из копии', createdAt: 1, updatedAt: 1 },
+        ],
+        sets: [
+          ...backup.tables.sets,
+          { id: 's-backup', exerciseId: 'e-backup', position: 0, reps: 5, weight: 100, restSec: null, createdAt: 1, updatedAt: 1 },
+        ],
+      },
+    };
+    const workoutPlan = await planBackupRestore(newer, keepUri);
+    await applyRestorePlan(workoutPlan);
+    const restored = await getWorkoutDetails('w2');
+    expect(restored?.workout.notes).toBe('Из копии');
+    expect(restored?.exercises).toEqual([
+      { id: 'e-backup', name: 'Тяга из копии', sets: [{ id: 's-backup', reps: 5, weight: 100, restSec: null }] },
+    ]);
+    expect((await planBackupRestore(newer, keepUri)).actions).toEqual([]);
+  });
+
+  it('на «чистый» телефон копия переносится целиком', async () => {
+    const backup = await exportBackup();
+    const { createTestDatabase } = jest.requireActual('./testing/testDatabase');
+    const fresh = createTestDatabase();
+    const database = jest.requireMock('./database') as { db: unknown };
+    const original = database.db;
+    database.db = fresh.db;
+    try {
+      expect((await exportBackup()).tables.clients).toEqual([]);
+      const plan = await planBackupRestore(backup, (row) => row.uri as string);
+      expect(plan.summary.skipped).toBe(0);
+      expect(plan.actions.length).toBe(Object.values(backup.tables).reduce((sum, rows) => sum + rows.length, 0));
+      await applyRestorePlan(plan);
+      const copy = await exportBackup();
+      for (const table of Object.keys(backup.tables) as (keyof typeof backup.tables)[]) {
+        expect(copy.tables[table].length).toBe(backup.tables[table].length);
+      }
+      expect((await getClient('c-b'))?.firstName).toBe('Юлия');
+    } finally {
+      database.db = original;
+    }
   });
 });
 

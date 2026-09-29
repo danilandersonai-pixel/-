@@ -2,13 +2,12 @@
 
 import { notifyChange } from './changes';
 import type { ExerciseInput, Workout, WorkoutExercise, WorkoutFields, WorkoutSet } from './schema';
-import { createWebTable, getBrowserStorage } from './webTable';
+import { browserTable } from './webTable';
 import type { WorkoutDetails, WorkoutSummary } from './workouts';
 
-const storage = getBrowserStorage();
-const workoutTable = createWebTable<Workout>('workouts', storage);
-const exerciseTable = createWebTable<WorkoutExercise>('workout_exercises', storage);
-const setTable = createWebTable<WorkoutSet>('sets', storage);
+const workoutTable = browserTable<Workout>('workouts');
+const exerciseTable = browserTable<WorkoutExercise>('workout_exercises');
+const setTable = browserTable<WorkoutSet>('sets');
 
 function alive(): Workout[] {
   return workoutTable.all().filter((w) => w.deletedAt === null);

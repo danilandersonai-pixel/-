@@ -3,9 +3,9 @@
 import { notifyChange } from './changes';
 import { newId } from './ids';
 import type { Photo, PhotoAngle } from './schema';
-import { createWebTable, getBrowserStorage } from './webTable';
+import { browserTable } from './webTable';
 
-const table = createWebTable<Photo>('photos', getBrowserStorage());
+const table = browserTable<Photo>('photos');
 
 const api = {
   async listPhotos(clientId: string): Promise<Photo[]> {

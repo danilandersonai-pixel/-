@@ -1,4 +1,5 @@
 import Constants from 'expo-constants';
+import { router } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
@@ -9,15 +10,13 @@ import { ConfirmButton } from '@/components/ConfirmButton';
 import { icons } from '@/components/Icon';
 import { InfoRow } from '@/components/InfoRow';
 import { Screen } from '@/components/Screen';
-import { exportBackup } from '@/db/backup';
+import { shareBackupFile } from '@/db/backupFiles';
 import { fillDemoData } from '@/db/demo';
+import { countsText } from '@/i18n/backup';
 import { ru } from '@/i18n/ru';
-import { backupCounts, backupFileName } from '@/lib/backup';
 import { spacing } from '@/theme';
-import { toIsoDate } from '@/utils/date';
 import { fill } from '@/utils/format';
-import { pluralRu } from '@/utils/plural';
-import { canShareFiles, shareTextFile } from '@/utils/share';
+import { canShareFiles } from '@/utils/share';
 
 const b = ru.backup;
 
@@ -45,17 +44,9 @@ export default function SettingsScreen() {
     setBusy(true);
     setMessage(null);
     try {
-      const backup = await exportBackup();
-      const counts = backupCounts(backup);
-      const summary = [
-        `${counts.clients} ${pluralRu(counts.clients, b.counts.clients)}`,
-        `${counts.measurements} ${pluralRu(counts.measurements, b.counts.measurements)}`,
-        `${counts.workouts} ${pluralRu(counts.workouts, b.counts.workouts)}`,
-      ].join(', ');
-      setMessage({ text: `${b.contents}: ${summary}`, error: false });
-      if (canShareFiles) {
-        await shareTextFile(backupFileName(toIsoDate(new Date())), JSON.stringify(backup, null, 2), 'application/json');
-      }
+      const summary = await shareBackupFile();
+      const missing = summary.missingPhotos > 0 ? ` ${fill(b.missingPhotos, { count: summary.missingPhotos })}` : '';
+      setMessage({ text: `${b.contents}: ${countsText(summary)}.${missing}`, error: false });
     } catch {
       setMessage({ text: b.error, error: true });
     } finally {
@@ -82,6 +73,7 @@ export default function SettingsScreen() {
         <AppText variant="caption" color="textTertiary">
           {canShareFiles ? b.hint : b.webNote}
         </AppText>
+        <Button title={b.restore} icon={icons.repeat} variant="secondary" onPress={() => router.push('/restore')} />
       </View>
 
       <View style={styles.section}>

@@ -3,9 +3,9 @@
 import { notifyChange } from './changes';
 import { newId } from './ids';
 import type { Health, HealthFields } from './schema';
-import { createWebTable, getBrowserStorage } from './webTable';
+import { browserTable } from './webTable';
 
-const table = createWebTable<Health>('health', getBrowserStorage());
+const table = browserTable<Health>('health');
 
 function findByClient(clientId: string): Health | null {
   return table.all().find((row) => row.clientId === clientId) ?? null;

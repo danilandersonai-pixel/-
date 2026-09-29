@@ -2,9 +2,9 @@
 
 import { notifyChange } from './changes';
 import type { NutritionFields, NutritionPlan } from './schema';
-import { createWebTable, getBrowserStorage } from './webTable';
+import { browserTable } from './webTable';
 
-const table = createWebTable<NutritionPlan>('nutrition_plans', getBrowserStorage());
+const table = browserTable<NutritionPlan>('nutrition_plans');
 
 const api = {
   async listNutritionPlans(clientId: string): Promise<NutritionPlan[]> {

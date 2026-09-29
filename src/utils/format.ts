@@ -30,6 +30,13 @@ export function formatDate(date: Date): string {
   return `${day}.${month}.${date.getFullYear()}`;
 }
 
+/** Дата и время: «29.09.2026, 14:30» */
+export function formatDateTime(date: Date): string {
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  return `${formatDate(date)}, ${hours}:${minutes}`;
+}
+
 /**
  * Число из поля ввода. Понимает и запятую, и точку: «72,5» и «72.5» → 72.5.
  * Пустая строка или мусор → null.

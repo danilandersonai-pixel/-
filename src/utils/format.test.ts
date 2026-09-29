@@ -1,4 +1,4 @@
-import { fill, formatDate, formatInteger, formatMeasure, formatNumber, lowerFirst, parseDecimal } from './format';
+import { fill, formatDate, formatDateTime, formatInteger, formatMeasure, formatNumber, lowerFirst, parseDecimal } from './format';
 
 describe('formatNumber', () => {
   it('ставит запятую вместо точки', () => {
@@ -20,6 +20,10 @@ describe('formatDate', () => {
   it('форматирует как ДД.ММ.ГГГГ', () => {
     expect(formatDate(new Date(2026, 8, 5))).toBe('05.09.2026');
     expect(formatDate(new Date(2025, 11, 31))).toBe('31.12.2025');
+  });
+
+  it('с временем', () => {
+    expect(formatDateTime(new Date(2026, 8, 29, 9, 5))).toBe('29.09.2026, 09:05');
   });
 });
 

@@ -2,9 +2,9 @@
 
 import { notifyChange } from './changes';
 import type { Measurement, MeasurementFields } from './schema';
-import { createWebTable, getBrowserStorage } from './webTable';
+import { browserTable } from './webTable';
 
-const table = createWebTable<Measurement>('measurements', getBrowserStorage());
+const table = browserTable<Measurement>('measurements');
 
 function newestFirst(a: Measurement, b: Measurement): number {
   return b.date.localeCompare(a.date) || b.createdAt - a.createdAt;

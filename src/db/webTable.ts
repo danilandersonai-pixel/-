@@ -71,3 +71,20 @@ export function createWebTable<Row extends { id: string }>(
     },
   };
 }
+
+const browserTables = new Map<string, WebTable<{ id: string }>>();
+
+/**
+ * Таблица превью в localStorage — одна на имя для всего приложения. Если бы у каждого модуля
+ * была своя копия, запись из одного модуля (например, восстановление из копии) не увидел бы другой,
+ * а его следующая запись затёрла бы чужие строки.
+ */
+export function browserTable<Row extends { id: string }>(name: string): WebTable<Row> {
+  let table = browserTables.get(name);
+  if (!table) {
+    table = createWebTable<{ id: string }>(name, getBrowserStorage());
+    browserTables.set(name, table);
+  }
+  // Строки одной таблицы всегда одного типа: имя таблицы однозначно задаёт тип строки
+  return table as unknown as WebTable<Row>;
+}

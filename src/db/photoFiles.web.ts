@@ -26,6 +26,11 @@ const api = {
     context.drawImage(image, 0, 0, canvas.width, canvas.height);
     return canvas.toDataURL('image/jpeg', 0.75);
   },
+
+  /** В браузере в базе уже лежит готовая data:-строка */
+  resolvePhotoUri(stored: string): string {
+    return stored;
+  },
 } satisfies typeof import('./photoFiles');
 
-export const { storePhoto } = api;
+export const { storePhoto, resolvePhotoUri } = api;
