@@ -1,0 +1,18 @@
+{
+  "v": 4,
+  "createdOnFiles": { "v": 1, "at": "2026-09-29T09:04:04Z" },
+  "title": "Спортивный Треккер — демо",
+  "cover": "cover",
+  "order": ["cover", "problem", "card", "calculator", "progress", "workouts", "health", "today", "client", "reliability", "numbers", "next", "demo"],
+  "sections": {
+    "why": { "description": "Зачем тренеру своё приложение", "start": "cover" },
+    "features": { "description": "Что умеет приложение: карточка, калькулятор, прогресс, тренировки, здоровье", "start": "card" },
+    "trust": { "description": "Надёжность, данные и что уже сделано", "start": "reliability" },
+    "next": { "description": "Планы и живое демо", "start": "next" }
+  },
+  "faces": {
+    "oswald": { "family": "Oswald", "href": "https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&display=swap" },
+    "golos-text": { "family": "Golos Text", "href": "https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&display=swap" }
+  },
+  "designSystems": []
+}

@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Спортивный Треккер — презентация</title>
+<meta name="description" content="Презентация приложения для персонального тренера «Спортивный Треккер»">
+<meta name="theme-color" content="#0C0D0F">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Golos+Text:wght@400;500;600&display=swap">
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: #08090A; }
+  body { overflow: hidden; font-family: 'Golos Text', Arial, sans-serif; -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; }
+
+  /* Слайд — холст 1920×1080, целиком вписывается в окно */
+  .stage { position: fixed; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; }
+  .stage > section { position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden; opacity: 0; visibility: hidden; transition: opacity .35s ease, visibility 0s linear .35s; }
+  .stage > section.is-active { opacity: 1; visibility: visible; transition: opacity .35s ease; }
+  .stage h1, .stage h2, .stage h3, .stage p, .stage table { margin: 0; }
+  .stage h1, .stage h2, .stage h3, .stage p { overflow-wrap: break-word; }
+  .stage aside { display: none; }
+  .stage img { display: block; flex-shrink: 0; }
+  .stage .icon { flex-shrink: 0; }
+  .stage a { color: inherit; text-underline-offset: 6px; }
+  .stage table { border-collapse: collapse; }
+  .stage th, .stage td { padding: .35em .6em; border: 1px solid #DCDDD6; text-align: left; font-weight: 400; }
+  .stage th { font-weight: 600; }
+
+  /* Управление */
+  .bar { position: fixed; left: 0; bottom: 0; height: 4px; background: #C6F24E; transition: width .35s ease; }
+  .controls { position: fixed; right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom)); display: flex; gap: 8px; align-items: center; transition: opacity .3s ease; }
+  .controls.is-idle { opacity: .25; }
+  .controls button, .counter { height: 44px; border-radius: 12px; border: 1px solid rgba(242, 243, 238, .16); background: rgba(12, 13, 15, .78); color: #F2F3EE; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+  .controls button { width: 44px; display: grid; place-items: center; cursor: pointer; padding: 0; }
+  .controls button:disabled { opacity: .35; cursor: default; }
+  .controls button:focus-visible { outline: 2px solid #C6F24E; outline-offset: 2px; }
+  .controls svg { width: 20px; height: 20px; }
+  .counter { min-width: 76px; padding: 0 12px; display: grid; place-items: center; font: 600 15px/1 'Golos Text', Arial, sans-serif; font-variant-numeric: tabular-nums; }
+  .rotate { position: fixed; left: 50%; top: max(16px, env(safe-area-inset-top)); transform: translateX(-50%); display: none; padding: 10px 16px; border-radius: 12px; background: rgba(12, 13, 15, .85); border: 1px solid rgba(242, 243, 238, .16); color: #F2F3EE; font: 500 14px/1.3 'Golos Text', Arial, sans-serif; white-space: nowrap; }
+  @media (orientation: portrait) and (max-width: 700px) { .rotate { display: block; } }
+  @media (max-height: 500px) {
+    .controls { gap: 6px; right: max(8px, env(safe-area-inset-right)); bottom: max(8px, env(safe-area-inset-bottom)); }
+    .controls button, .counter { height: 36px; border-radius: 10px; }
+    .controls button { width: 36px; }
+    .counter { min-width: 64px; font-size: 13px; }
+  }
+
+  /* Печать и «Сохранить как PDF»: по слайду на страницу */
+  @media print {
+    @page { size: 1920px 1080px; margin: 0; }
+    html, body { height: auto; overflow: visible; background: none; }
+    .stage { position: static; transform: none !important; height: auto; }
+    .stage > section { position: relative; opacity: 1; visibility: visible; break-after: page; }
+    .controls, .bar, .rotate { display: none; }
+  }
+</style>
+<noscript><style>
+  body { overflow: auto; }
+  .stage { position: static; height: auto; }
+  .stage > section { position: relative; opacity: 1; visibility: visible; }
+  .controls, .bar { display: none; }
+</style></noscript>
+</head>
+<body>
+<main class="stage" aria-live="polite">
+<section id="cover" role="group" aria-roledescription="слайд" aria-label="Слайд 1 из 13" data-transition="fade" style="background:#0C0D0F; color:#F2F3EE; font-family:'Golos Text', Arial, sans-serif; padding:128px; display:grid; grid-template-columns:1fr 381px; gap:96px; align-items:center">
+<div style="display:flex; flex-direction:column; gap:40px">
+<p style="font-size:24px; font-weight:600; letter-spacing:4px; text-transform:uppercase; color:#C6F24E">Приложение для персонального тренера</p>
+<h1 style="font-family:'Oswald', Arial, sans-serif; font-size:136px; font-weight:700; line-height:1; text-transform:uppercase; color:#F2F3EE">Спортивный<br>Треккер</h1>
+<p style="font-size:40px; line-height:1.35; color:#A9AFB7">Спортивная тетрадь тренера: профиль, здоровье, замеры, тренировки и питание каждого подопечного — в одном телефоне.</p>
+<p style="font-size:24px; color:#A9AFB7">Демо · сентябрь 2026</p>
+</div>
+<img src="img/01-clients.png" alt="Экран «Подопечные»: блок «Сегодня» и список подопечных с процентом жира" style="width:381px; height:824px; object-fit:contain; border-radius:40px; border:2px solid #2A2D33">
+<aside>Спортивный Треккер — приложение для персонального тренера в зале. Это его спортивная тетрадь: всё о каждом подопечном в одном телефоне. На экране — главный экран с блоком «Сегодня» и списком подопечных.</aside>
+</section>
+<section id="problem" role="group" aria-roledescription="слайд" aria-label="Слайд 2 из 13" data-transition="fade" style="background:#F1F1EC; color:#0C0D0F; font-family:'Golos Text', Arial, sans-serif; padding:128px; display:flex; flex-direction:column; align-items:start; gap:48px">
+<p style="font-size:24px; font-weight:600; letter-spacing:4px; text-transform:uppercase; color:#0C0D0F; background:#C6F24E; padding:8px 20px; border-radius:999px">Проблема</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:600; line-height:1.05; text-transform:uppercase; color:#0C0D0F">Данные клиента разбросаны по разным местам</h2>
+<div style="display:flex; gap:32px; align-self:stretch">
+<div style="flex:1; display:flex; flex-direction:column; gap:16px; background:#FBFBF8; padding:40px; border:1px solid #DCDDD6; border-radius:24px">
+<h3 style="font-size:40px; font-weight:600; line-height:1.2; color:#0C0D0F">Заметки и таблицы</h3>
+<p style="font-size:32px; line-height:1.4; color:#4B5058">Замеры в одном файле, тренировки в другом, травмы — в памяти.</p>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; gap:16px; background:#FBFBF8; padding:40px; border:1px solid #DCDDD6; border-radius:24px">
+<h3 style="font-size:40px; font-weight:600; line-height:1.2; color:#0C0D0F">Мессенджеры</h3>
+<p style="font-size:32px; line-height:1.4; color:#4B5058">Фото «до/после» и договорённости тонут в переписке.</p>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; gap:16px; background:#FBFBF8; padding:40px; border:1px solid #DCDDD6; border-radius:24px">
+<h3 style="font-size:40px; font-weight:600; line-height:1.2; color:#0C0D0F">Чужие приложения</h3>
+<p style="font-size:32px; line-height:1.4; color:#4B5058">Главная жалоба их пользователей — потеря данных.</p>
+</div>
+</div>
+<p style="font-size:32px; line-height:1.4; color:#4B5058">Тренеру нужно одно место, которое не стыдно показать клиенту и не страшно потерять.</p>
+<aside>Сегодня тренер держит клиентов в заметках, таблицах и мессенджерах. У готовых приложений главная жалоба — потеря данных. Отсюда два требования: всё в одном месте и надёжное хранение.</aside>
+</section>
+<section id="card" role="group" aria-roledescription="слайд" aria-label="Слайд 3 из 13" data-transition="fade" style="background:#0C0D0F; color:#F2F3EE; font-family:'Golos Text', Arial, sans-serif; padding:128px; display:grid; grid-template-columns:1fr 381px; gap:96px; align-items:start">
+<div style="display:flex; flex-direction:column; align-items:start; gap:40px">
+<p style="font-size:24px; font-weight:600; letter-spacing:4px; text-transform:uppercase; color:#C6F24E">Карточка подопечного</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:600; line-height:1.05; text-transform:uppercase; color:#F2F3EE">Всё о клиенте — на одном экране</h2>
+<div style="display:flex; flex-direction:column; gap:24px; align-self:stretch">
+<div style="display:flex; gap:32px; align-items:start; padding:0 0 24px; border-bottom:1px solid #2A2D33">
+<p style="width:230px; font-size:32px; font-weight:600; color:#C6F24E">Профиль</p>
+<p style="flex:1; font-size:32px; line-height:1.35; color:#A9AFB7">Контакты, цель, звонок и WhatsApp в одно касание</p>
+</div>
+<div style="display:flex; gap:32px; align-items:start; padding:0 0 24px; border-bottom:1px solid #2A2D33">
+<p style="width:230px; font-size:32px; font-weight:600; color:#C6F24E">Здоровье</p>
+<p style="flex:1; font-size:32px; line-height:1.35; color:#A9AFB7">Противопоказания, травмы, анкета PAR-Q</p>
+</div>
+<div style="display:flex; gap:32px; align-items:start; padding:0 0 24px; border-bottom:1px solid #2A2D33">
+<p style="width:230px; font-size:32px; font-weight:600; color:#C6F24E">Замеры</p>
+<p style="flex:1; font-size:32px; line-height:1.35; color:#A9AFB7">Калькулятор состава тела и цель с прогнозом</p>
+</div>
+<div style="display:flex; gap:32px; align-items:start; padding:0 0 24px; border-bottom:1px solid #2A2D33">
+<p style="width:230px; font-size:32px; font-weight:600; color:#C6F24E">Тренировки</p>
+<p style="flex:1; font-size:32px; line-height:1.35; color:#A9AFB7">Календарь, подходы, рекорды, абонемент</p>
+</div>
+<div style="display:flex; gap:32px; align-items:start">
+<p style="width:230px; font-size:32px; font-weight:600; color:#C6F24E">Питание</p>
+<p style="flex:1; font-size:32px; line-height:1.35; color:#A9AFB7">Калории и КБЖУ с проверкой, заметки тренера</p>
+</div>
+</div>
+<p style="font-size:24px; color:#A9AFB7">Обязательно только имя — остальное заполняется по ходу работы.</p>
+</div>
+<img src="img/02-card-measurements.png" alt="Карточка Анны Смирновой: кнопки связи, вкладки и цель «Жир 20 %» с прогнозом" style="width:381px; height:824px; object-fit:contain; border-radius:40px; border:2px solid #2A2D33">
+<aside>Карточка подопечного — пять вкладок. Для новой карточки обязательно только имя, остальное тренер заполняет по ходу. На экране — вкладка «Замеры» с целью и прогнозом.</aside>
+</section>
+<section id="calculator" role="group" aria-roledescription="слайд" aria-label="Слайд 4 из 13" data-transition="fade" style="background:#F1F1EC; color:#0C0D0F; font-family:'Golos Text', Arial, sans-serif; padding:128px; display:grid; grid-template-columns:1fr 381px; gap:96px; align-items:start">
+<div style="display:flex; flex-direction:column; align-items:start; gap:36px">
+<p style="font-size:24px; font-weight:600; letter-spacing:4px; text-transform:uppercase; color:#0C0D0F; background:#C6F24E; padding:8px 20px; border-radius:999px">Главная фишка</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:600; line-height:1.05; text-transform:uppercase; color:#0C0D0F">Калькулятор состава тела</h2>
+<p style="font-size:32px; line-height:1.4; color:#4B5058">Тренер вводит замеры — приложение само считает состав тела и показывает, по какой формуле и с какой погрешностью.</p>
+<table style="width:1187px; font-size:26px; color:#0C0D0F">
+<tr style="background:#0C0D0F"><th style="width:32%; color:#C6F24E">Метод</th><th style="width:40%; color:#C6F24E">Что нужно</th><th style="width:28%; color:#C6F24E">Что считает</th></tr>
+<tr style="background:#FBFBF8"><td>ВМС США</td><td>рост, шея, талия, бёдра</td><td>% жира, ±3–4 %</td></tr>
+<tr style="background:#FBFBF8"><td>Jackson–Pollock 3</td><td>3 складки калипером, возраст</td><td>% жира, ±3,5 %</td></tr>
+<tr style="background:#FBFBF8"><td>Boer</td><td>вес, рост</td><td>безжировая масса</td></tr>
+<tr style="background:#FBFBF8"><td>Lee</td><td>обхваты и складки рук и ног</td><td>мышечная масса</td></tr>
+<tr style="background:#FBFBF8"><td>ИМТ и FFMI</td><td>вес, рост, безжировая масса</td><td>индексы</td></tr>
+</table>
+<p style="font-size:24px; line-height:1.4; color:#4B5058">Если есть складки, основной метод — Jackson–Pollock. У каждой цифры кнопка «?» с объяснением простыми словами.</p>
+</div>
+<img src="img/03-result.png" alt="Результат замера: жир 22,6 % ±3,5 % по складкам, жировая, безжировая и мышечная масса, ИМТ, FFMI" style="width:381px; height:824px; object-fit:contain; border-radius:40px; border:2px solid #2A2D33">
+<aside>Главная фишка. Пять проверенных формул: метод ВМС США по обхватам, Jackson–Pollock по трём складкам, Boer для безжировой массы, Lee для мышечной, плюс ИМТ и FFMI. Рядом с каждой цифрой — метод и погрешность, а кнопка «?» объясняет её простыми словами. Результаты не хранятся, а считаются заново, поэтому исправление формулы сразу применяется ко всей истории.</aside>
+</section>
+<section id="progress" role="group" aria-roledescription="слайд" aria-label="Слайд 5 из 13" data-transition="fade" style="background:#0C0D0F; color:#F2F3EE; font-family:'Golos Text', Arial, sans-serif; padding:128px; display:grid; grid-template-columns:1fr 381px; gap:96px; align-items:start">
+<div style="display:flex; flex-direction:column; align-items:start; gap:40px">
+<p style="font-size:24px; font-weight:600; letter-spacing:4px; text-transform:uppercase; color:#C6F24E">Прогресс</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:600; line-height:1.05; text-transform:uppercase; color:#F2F3EE">Результат видно — и клиенту тоже</h2>
+<div style="display:flex; flex-direction:column; gap:28px; align-self:stretch">
+<div style="display:flex; gap:24px; align-items:start">
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:#C6F24E; width:40px; height:40px"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+<p style="flex:1; font-size:32px; line-height:1.35; color:#F2F3EE">Графики каждого показателя по датам: вес, % жира, массы, обхваты</p>
+</div>
+<div style="display:flex; gap:24px; align-items:start">
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:#C6F24E; width:40px; height:40px"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+<p style="flex:1; font-size:32px; line-height:1.35; color:#F2F3EE">Цель с прогнозом: «при нынешнем темпе — к 09.11.2026»</p>
+</div>
+<div style="display:flex; gap:24px; align-items:start">
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:#C6F24E; width:40px; height:40px"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+<p style="flex:1; font-size:32px; line-height:1.35; color:#F2F3EE">Сравнение любых двух замеров: что изменилось и насколько</p>
+</div>
+<div style="display:flex; gap:24px; align-items:start">
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:#C6F24E; width:40px; height:40px"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+<p style="flex:1; font-size:32px; line-height:1.35; color:#F2F3EE">Фото «до/после» рядом или шторкой — ведите пальцем</p>
+</div>
+</div>
+<p style="font-size:24px; line-height:1.4; color:#A9AFB7">Расчёты не хранятся, а считаются из замеров: уточнили формулу — пересчиталась вся история.</p>
+</div>
+<img src="img/04-progress.png" alt="График процента жира: с 28 до 22,6 % с июля по сентябрь, все точки одним методом" style="width:381px; height:824px; object-fit:contain; border-radius:40px; border:2px solid #2A2D33">
+<aside>Графики показывают каждый показатель по датам, и все точки посчитаны одним методом. Цель показывает путь и прогноз по нынешнему темпу. Фото «до/после» можно сравнить рядом или шторкой.</aside>
+</section>
+<section id="workouts" role="group" aria-roledescription="слайд" aria-label="Слайд 6 из 13" data-transition="fade" style="background:#F1F1EC; color:#0C0D0F; font-family:'Golos Text', Arial, sans-serif; padding:128px; display:grid; grid-template-columns:1fr 330px 330px; gap:48px; align-items:start">
+<div style="display:flex; flex-direction:column; align-items:start; gap:40px">
+<p style="font-size:24px; font-weight:600; letter-spacing:4px; text-transform:uppercase; color:#0C0D0F; background:#C6F24E; padding:8px 20px; border-radius:999px">Тренировки</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:600; line-height:1.05; text-transform:uppercase; color:#0C0D0F">От плана до личного рекорда</h2>
+<div style="display:flex; flex-direction:column; gap:24px; align-self:stretch">
+<div style="display:flex; gap:24px; align-items:start">
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:#0C0D0F; width:40px; height:40px"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+<p style="flex:1; font-size:32px; line-height:1.35; color:#0C0D0F">Серии: «каждый вт и чт на 4 недели» одной кнопкой</p>
+</div>
+<div style="display:flex; gap:24px; align-items:start">
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:#0C0D0F; width:40px; height:40px"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+<p style="flex:1; font-size:32px; line-height:1.35; color:#0C0D0F">Подходы, повторы, вес; «повторить прошлую»</p>
+</div>
+<div style="display:flex; gap:24px; align-items:start">
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:#0C0D0F; width:40px; height:40px"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+<p style="flex:1; font-size:32px; line-height:1.35; color:#0C0D0F">Личные рекорды и расчётный максимум (1ПМ)</p>
+</div>
+<div style="display:flex; gap:24px; align-items:start">
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:#0C0D0F; width:40px; height:40px"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+<p style="flex:1; font-size:32px; line-height:1.35; color:#0C0D0F">Таймер отдыха с вибрацией</p>
+</div>
+<div style="display:flex; gap:24px; align-items:start">
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:#0C0D0F; width:40px; height:40px"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+<p style="flex:1; font-size:32px; line-height:1.35; color:#0C0D0F">Абонемент: «осталось 1 из 12» и напоминание о продлении</p>
+</div>
+</div>
+</div>
+<img src="img/05-workouts.png" alt="Вкладка «Тренировки»: 11 проведено, 11 часов, следующая во вторник, абонемент «Осталось 1 из 12»" style="width:330px; height:714px; object-fit:contain; border-radius:36px; border:2px solid #2A2D33">
+<img src="img/06-records.png" alt="Жим лёжа: лучший подход 87,5 кг × 8, расчётный максимум 110,8 кг, график роста и отметки «Рекорд»" style="width:330px; height:714px; object-fit:contain; border-radius:36px; border:2px solid #2A2D33">
+<aside>Тренировки: календарь, серии по дням недели, подходы с весом. Приложение само находит личные рекорды и считает расчётный максимум по формуле Эпли. Абонемент списывается по проведённым тренировкам.</aside>
+</section>
+<section id="health" role="group" aria-roledescription="слайд" aria-label="Слайд 7 из 13" data-transition="fade" style="background:#0C0D0F; color:#F2F3EE; font-family:'Golos Text', Arial, sans-serif; padding:128px; display:grid; grid-template-columns:1fr 381px; gap:96px; align-items:start">
+<div style="display:flex; flex-direction:column; align-items:start; gap:40px">
+<p style="font-size:24px; font-weight:600; letter-spacing:4px; text-transform:uppercase; color:#C6F24E">Здоровье</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:600; line-height:1.05; text-transform:uppercase; color:#F2F3EE">Безопасно для клиента и по закону</h2>
+<div style="display:flex; flex-direction:column; gap:28px; align-self:stretch">
+<div style="display:flex; gap:24px; align-items:start">
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:#C6F24E; width:40px; height:40px"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+<p style="flex:1; font-size:32px; line-height:1.35; color:#F2F3EE">Согласие на обработку данных о здоровье (152-ФЗ) — при создании карточки, с датой и версией текста</p>
+</div>
+<div style="display:flex; gap:24px; align-items:start">
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:#C6F24E; width:40px; height:40px"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+<p style="flex:1; font-size:32px; line-height:1.35; color:#F2F3EE">Анкета PAR-Q: 7 вопросов «Да/Нет», итог сразу — «можно начинать» или «нужен врач»</p>
+</div>
+<div style="display:flex; gap:24px; align-items:start">
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:#C6F24E; width:40px; height:40px"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+<p style="flex:1; font-size:32px; line-height:1.35; color:#F2F3EE">Противопоказания, травмы и ограничения — всегда под рукой</p>
+</div>
+<div style="display:flex; gap:24px; align-items:start">
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:#C6F24E; width:40px; height:40px"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+<p style="flex:1; font-size:32px; line-height:1.35; color:#F2F3EE">Анкете больше года — приложение напомнит пройти заново</p>
+</div>
+</div>
+</div>
+<img src="img/07-parq.png" alt="Вкладка «Здоровье»: анкета PAR-Q с итогом «Нужна консультация врача» и напоминанием пройти заново" style="width:381px; height:824px; object-fit:contain; border-radius:40px; border:2px solid #2A2D33">
+<aside>Замеры, травмы и противопоказания — это данные о здоровье, особая категория по 152-ФЗ. Поэтому при создании карточки подопечный даёт согласие. Анкета PAR-Q помогает заметить, когда перед тренировками сначала нужен врач.</aside>
+</section>
+<section id="today" role="group" aria-roledescription="слайд" aria-label="Слайд 8 из 13" data-transition="fade" style="background:#F1F1EC; color:#0C0D0F; font-family:'Golos Text', Arial, sans-serif; padding:128px; display:grid; grid-template-columns:1fr 330px 330px; gap:48px; align-items:start">
+<div style="display:flex; flex-direction:column; align-items:start; gap:40px">
+<p style="font-size:24px; font-weight:600; letter-spacing:4px; text-transform:uppercase; color:#0C0D0F; background:#C6F24E; padding:8px 20px; border-radius:999px">Каждый день</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:600; line-height:1.05; text-transform:uppercase; color:#0C0D0F">С чего начать день</h2>
+<div style="display:flex; flex-direction:column; gap:24px; align-self:stretch">
+<div style="display:flex; gap:24px; align-items:start">
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:#0C0D0F; width:40px; height:40px"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+<p style="flex:1; font-size:32px; line-height:1.35; color:#0C0D0F">Блок «Сегодня»: тренировки дня, дни рождения, кому пора на замер</p>
+</div>
+<div style="display:flex; gap:24px; align-items:start">
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:#0C0D0F; width:40px; height:40px"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+<p style="flex:1; font-size:32px; line-height:1.35; color:#0C0D0F">Календарь всех подопечных с точками тренировок</p>
+</div>
+<div style="display:flex; gap:24px; align-items:start">
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:#0C0D0F; width:40px; height:40px"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+<p style="flex:1; font-size:32px; line-height:1.35; color:#0C0D0F">Уведомление перед тренировкой: за 30 мин, 1 или 2 ч</p>
+</div>
+<div style="display:flex; gap:24px; align-items:start">
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:#0C0D0F; width:40px; height:40px"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+<p style="flex:1; font-size:32px; line-height:1.35; color:#0C0D0F">Светлая и тёмная тема: тёмная не слепит в зале, светлая видна на солнце</p>
+</div>
+</div>
+</div>
+<img src="img/01-clients-light.png" alt="Светлая тема: главный экран с блоком «Сегодня» и списком подопечных" style="width:330px; height:714px; object-fit:contain; border-radius:36px; border:2px solid #DCDDD6">
+<img src="img/08-calendar.png" alt="Тёмная тема: календарь на сентябрь с точками тренировок и тренировкой на сегодня" style="width:330px; height:714px; object-fit:contain; border-radius:36px; border:2px solid #2A2D33">
+<aside>Утром тренер открывает приложение и сразу видит, что сегодня: чья тренировка, у кого день рождения, кому пора сделать замер. Тема переключается в настройках.</aside>
+</section>
+<section id="client" role="group" aria-roledescription="слайд" aria-label="Слайд 9 из 13" data-transition="fade" style="background:#0C0D0F; color:#F2F3EE; font-family:'Golos Text', Arial, sans-serif; padding:128px; display:flex; flex-direction:column; align-items:start; gap:48px">
+<p style="font-size:24px; font-weight:600; letter-spacing:4px; text-transform:uppercase; color:#C6F24E">Отчёты и связь</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:600; line-height:1.05; text-transform:uppercase; color:#F2F3EE">Для клиента — отчёт, для тренера — связь</h2>
+<div style="display:flex; gap:32px; align-self:stretch">
+<div style="flex:1; display:flex; flex-direction:column; gap:24px; background:#16181C; padding:40px; border:1px solid #2A2D33; border-radius:24px">
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:#C6F24E; width:56px; height:56px"><path d="M21 3L3 10.5l7.2 3.3L13.5 21 21 3z"/><path d="M10.2 13.8L21 3"/></svg>
+<h3 style="font-size:40px; font-weight:600; line-height:1.2; color:#F2F3EE">PDF-отчёт</h3>
+<p style="font-size:32px; line-height:1.4; color:#A9AFB7">«Прогресс за период»: цифры, графики, фото и имя тренера. Отправка в любой мессенджер.</p>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; gap:24px; background:#16181C; padding:40px; border:1px solid #2A2D33; border-radius:24px">
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:#C6F24E; width:56px; height:56px"><ellipse cx="12" cy="5.5" rx="7.5" ry="3"/><path d="M4.5 5.5v13c0 1.7 3.4 3 7.5 3s7.5-1.3 7.5-3v-13"/><path d="M4.5 12c0 1.7 3.4 3 7.5 3s7.5-1.3 7.5-3"/></svg>
+<h3 style="font-size:40px; font-weight:600; line-height:1.2; color:#F2F3EE">Excel (CSV)</h3>
+<p style="font-size:32px; line-height:1.4; color:#A9AFB7">Все замеры и расчёты таблицей — откроется в Excel и Google Таблицах.</p>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; gap:24px; background:#16181C; padding:40px; border:1px solid #2A2D33; border-radius:24px">
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:#C6F24E; width:56px; height:56px"><path d="M4 5h16v11H9.5L4 20V5z"/></svg>
+<h3 style="font-size:40px; font-weight:600; line-height:1.2; color:#F2F3EE">Связь</h3>
+<p style="font-size:32px; line-height:1.4; color:#A9AFB7">Звонок, WhatsApp и Telegram прямо из карточки подопечного.</p>
+</div>
+</div>
+<aside>PDF-отчёт за любой период с именем и контактами тренера уходит клиенту через системное меню «Поделиться». Все замеры можно выгрузить в Excel. Связаться с подопечным можно в одно касание из карточки.</aside>
+</section>
+<section id="reliability" role="group" aria-roledescription="слайд" aria-label="Слайд 10 из 13" data-transition="fade" style="background:#C6F24E; color:#0C0D0F; font-family:'Golos Text', Arial, sans-serif; padding:128px; display:flex; flex-direction:column; align-items:start; gap:48px">
+<p style="font-size:24px; font-weight:600; letter-spacing:4px; text-transform:uppercase; color:#0C0D0F">Надёжность</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:700; line-height:1.05; text-transform:uppercase; color:#0C0D0F">Здесь данные не теряются</h2>
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:40px; align-self:stretch">
+<div style="display:flex; gap:24px; align-items:start">
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:#0C0D0F; width:40px; height:40px"><circle cx="12" cy="12" r="9"/><path d="M8 12.3l2.8 2.8L16.2 9.6"/></svg>
+<p style="flex:1; font-size:32px; line-height:1.35; color:#0C0D0F">Сохраняется само, при вводе — кнопки «Сохранить» нет</p>
+</div>
+<div style="display:flex; gap:24px; align-items:start">
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:#0C0D0F; width:40px; height:40px"><circle cx="12" cy="12" r="9"/><path d="M8 12.3l2.8 2.8L16.2 9.6"/></svg>
+<p style="flex:1; font-size:32px; line-height:1.35; color:#0C0D0F">Работает без интернета</p>
+</div>
+<div style="display:flex; gap:24px; align-items:start">
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:#0C0D0F; width:40px; height:40px"><circle cx="12" cy="12" r="9"/><path d="M8 12.3l2.8 2.8L16.2 9.6"/></svg>
+<p style="flex:1; font-size:32px; line-height:1.35; color:#0C0D0F">Ничего не удаляется насовсем: архив и корзина</p>
+</div>
+<div style="display:flex; gap:24px; align-items:start">
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:#0C0D0F; width:40px; height:40px"><circle cx="12" cy="12" r="9"/><path d="M8 12.3l2.8 2.8L16.2 9.6"/></svg>
+<p style="flex:1; font-size:32px; line-height:1.35; color:#0C0D0F">Резервная копия — один ZIP-файл вместе с фото</p>
+</div>
+<div style="display:flex; gap:24px; align-items:start">
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:#0C0D0F; width:40px; height:40px"><circle cx="12" cy="12" r="9"/><path d="M8 12.3l2.8 2.8L16.2 9.6"/></svg>
+<p style="flex:1; font-size:32px; line-height:1.35; color:#0C0D0F">Вход по Face ID, отпечатку или коду телефона</p>
+</div>
+<div style="display:flex; gap:24px; align-items:start">
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:#0C0D0F; width:40px; height:40px"><circle cx="12" cy="12" r="9"/><path d="M8 12.3l2.8 2.8L16.2 9.6"/></svg>
+<p style="flex:1; font-size:32px; line-height:1.35; color:#0C0D0F">Данные только на телефоне: без аналитики и трекеров</p>
+</div>
+</div>
+<aside>Главная жалоба на приложения конкурентов — потеря данных, поэтому надёжность здесь главное требование. Всё сохраняется при вводе и работает без интернета. Удалённое можно вернуть из корзины. Копия — один файл с фото, её можно восстановить на новом телефоне. Данные никуда не отправляются.</aside>
+</section>
+<section id="numbers" role="group" aria-roledescription="слайд" aria-label="Слайд 11 из 13" data-transition="fade" style="background:#0C0D0F; color:#F2F3EE; font-family:'Golos Text', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; align-items:start; gap:48px">
+<p style="font-size:24px; font-weight:600; letter-spacing:4px; text-transform:uppercase; color:#C6F24E">Что уже сделано</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:600; line-height:1.05; text-transform:uppercase; color:#F2F3EE">Готово и проверено</h2>
+<div style="display:flex; gap:32px; align-self:stretch">
+<div style="flex:1; display:flex; flex-direction:column; gap:16px; background:#16181C; padding:40px; border:1px solid #2A2D33; border-radius:24px">
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:136px; font-weight:600; line-height:1; color:#C6F24E">20</p>
+<p style="font-size:32px; line-height:1.35; color:#A9AFB7">этапов разработки пройдено</p>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; gap:16px; background:#16181C; padding:40px; border:1px solid #2A2D33; border-radius:24px">
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:136px; font-weight:600; line-height:1; color:#C6F24E">217</p>
+<p style="font-size:32px; line-height:1.35; color:#A9AFB7">автотестов: формулы сверены с контрольными примерами</p>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; gap:16px; background:#16181C; padding:40px; border:1px solid #2A2D33; border-radius:24px">
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:136px; font-weight:600; line-height:1; color:#C6F24E">12</p>
+<p style="font-size:32px; line-height:1.35; color:#A9AFB7">таблиц в базе и 9 миграций — только вперёд</p>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; gap:16px; background:#16181C; padding:40px; border:1px solid #2A2D33; border-radius:24px">
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:136px; font-weight:600; line-height:1; color:#C6F24E">0</p>
+<p style="font-size:32px; line-height:1.35; color:#A9AFB7">серверов: данные подопечных не покидают телефон</p>
+</div>
+</div>
+<p style="position:absolute; left:128px; bottom:64px; width:1664px; font-size:24px; color:#A9AFB7">Expo · React Native · TypeScript · SQLite + Drizzle ORM · iPhone и Android</p>
+<aside>Приложение прошло 10 этапов MVP и 10 дополнений. 217 автотестов, в том числе все контрольные примеры формул. База — 12 таблиц, миграции только вперёд, поэтому обновления не ломают данные. Сервера нет: всё хранится на телефоне тренера.</aside>
+</section>
+<section id="next" role="group" aria-roledescription="слайд" aria-label="Слайд 12 из 13" data-transition="fade" style="background:#F1F1EC; color:#0C0D0F; font-family:'Golos Text', Arial, sans-serif; padding:128px; display:flex; flex-direction:column; align-items:start; gap:48px">
+<p style="font-size:24px; font-weight:600; letter-spacing:4px; text-transform:uppercase; color:#0C0D0F; background:#C6F24E; padding:8px 20px; border-radius:999px">Планы</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:600; line-height:1.05; text-transform:uppercase; color:#0C0D0F">Что дальше</h2>
+<div style="display:flex; gap:32px; align-self:stretch">
+<div style="flex:1; display:flex; flex-direction:column; gap:20px; background:#FBFBF8; padding:40px; border:1px solid #DCDDD6; border-top:8px solid #0C0D0F; border-radius:24px">
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:600; line-height:1; color:#0C0D0F">01</p>
+<h3 style="font-size:32px; font-weight:600; line-height:1.25; color:#0C0D0F">Проверка в зале</h3>
+<p style="font-size:24px; line-height:1.4; color:#4B5058">Запуск на телефонах тренеров, сборка для App Store и Google Play</p>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; gap:20px; background:#FBFBF8; padding:40px; border:1px solid #DCDDD6; border-top:8px solid #0C0D0F; border-radius:24px">
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:600; line-height:1; color:#0C0D0F">02</p>
+<h3 style="font-size:32px; font-weight:600; line-height:1.25; color:#0C0D0F">Облако в России</h3>
+<p style="font-size:24px; line-height:1.4; color:#4B5058">Синхронизация между устройствами на серверах в РФ — по 152-ФЗ</p>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; gap:20px; background:#FBFBF8; padding:40px; border:1px solid #DCDDD6; border-top:8px solid #0C0D0F; border-radius:24px">
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:600; line-height:1; color:#0C0D0F">03</p>
+<h3 style="font-size:32px; font-weight:600; line-height:1.25; color:#0C0D0F">Приложение для подопечных</h3>
+<p style="font-size:24px; line-height:1.4; color:#4B5058">Свои замеры, тренировки и прогресс — у клиента в телефоне</p>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; gap:20px; background:#FBFBF8; padding:40px; border:1px solid #DCDDD6; border-top:8px solid #0C0D0F; border-radius:24px">
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:600; line-height:1; color:#0C0D0F">04</p>
+<h3 style="font-size:32px; font-weight:600; line-height:1.25; color:#0C0D0F">Шаблоны тренировок</h3>
+<p style="font-size:24px; line-height:1.4; color:#4B5058">Готовые программы и подсказки названий упражнений</p>
+</div>
+</div>
+<aside>Следующий шаг — проверка на телефонах тренеров в зале и сборка для магазинов приложений. Потом облако на серверах в России и отдельное приложение для подопечных: архитектура к этому уже готова.</aside>
+</section>
+<section id="demo" role="group" aria-roledescription="слайд" aria-label="Слайд 13 из 13" data-transition="fade" style="background:#0C0D0F; color:#F2F3EE; font-family:'Golos Text', Arial, sans-serif; padding:128px; display:grid; grid-template-columns:1fr 400px; gap:96px; align-items:center">
+<div style="display:flex; flex-direction:column; align-items:start; gap:40px">
+<p style="font-size:24px; font-weight:600; letter-spacing:4px; text-transform:uppercase; color:#C6F24E">Живое демо</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:600; line-height:1.05; text-transform:uppercase; color:#F2F3EE">Попробуйте сами</h2>
+<div style="display:flex; flex-direction:column; gap:28px; align-self:stretch">
+<div style="display:flex; gap:28px; align-items:center">
+<p style="width:56px; height:56px; font-size:28px; font-weight:600; line-height:2; text-align:center; color:#0C0D0F; background:#C6F24E; border-radius:50%">1</p>
+<p style="flex:1; font-size:32px; line-height:1.35; color:#F2F3EE">Откройте ссылку — на телефоне или компьютере</p>
+</div>
+<div style="display:flex; gap:28px; align-items:center">
+<p style="width:56px; height:56px; font-size:28px; font-weight:600; line-height:2; text-align:center; color:#0C0D0F; background:#C6F24E; border-radius:50%">2</p>
+<p style="flex:1; font-size:32px; line-height:1.35; color:#F2F3EE">Настройки → «Заполнить примером»</p>
+</div>
+<div style="display:flex; gap:28px; align-items:center">
+<p style="width:56px; height:56px; font-size:28px; font-weight:600; line-height:2; text-align:center; color:#0C0D0F; background:#C6F24E; border-radius:50%">3</p>
+<p style="flex:1; font-size:32px; line-height:1.35; color:#F2F3EE">Смотрите 3 вымышленных подопечных с историей</p>
+</div>
+</div>
+<p style="font-size:24px; line-height:1.4; color:#C6F24E"><a href="https://raw.githack.com/danilandersonai-pixel/-/main/docs/demo/index.html" target="_blank" rel="noopener">raw.githack.com/danilandersonai-pixel/-/main/docs/demo/index.html</a></p>
+<p style="font-size:24px; line-height:1.4; color:#A9AFB7">Демо работает в браузере; введённые данные остаются только в нём.</p>
+</div>
+<div style="display:flex; background:#C6F24E; padding:24px; border-radius:24px">
+<svg aria-label="QR-код ссылки на демо приложения" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 37 37" width="352" height="352" shape-rendering="crispEdges" style="width:352px; height:352px"><path fill="#C6F24E" d="M0 0h37v37H0z"/><path stroke="#0C0D0F" d="M0 0.5h7m2 0h1m1 0h1m4 0h4m1 0h1m4 0h1m3 0h7M0 1.5h1m5 0h1m1 0h4m2 0h2m1 0h3m2 0h1m5 0h1m1 0h1m5 0h1M0 2.5h1m1 0h3m1 0h1m1 0h1m1 0h1m4 0h2m1 0h4m6 0h1m1 0h1m1 0h3m1 0h1M0 3.5h1m1 0h3m1 0h1m1 0h1m2 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m2 0h2m1 0h2m1 0h1m1 0h3m1 0h1M0 4.5h1m1 0h3m1 0h1m2 0h4m3 0h1m2 0h2m2 0h1m4 0h1m1 0h1m1 0h3m1 0h1M0 5.5h1m5 0h1m2 0h6m3 0h1m1 0h1m5 0h1m3 0h1m5 0h1M0 6.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M8 7.5h2m6 0h1m3 0h1m2 0h1m4 0h1M0 8.5h1m5 0h1m1 0h1m1 0h2m1 0h3m2 0h1m1 0h1m2 0h5m1 0h2m2 0h3M0 9.5h1m1 0h3m2 0h1m2 0h3m1 0h1m5 0h1m1 0h2m2 0h3m2 0h3m1 0h1M3 10.5h1m1 0h4m2 0h1m5 0h2m1 0h2m2 0h1m2 0h2m1 0h2m1 0h1m1 0h2M1 11.5h1m1 0h1m1 0h1m1 0h5m3 0h2m5 0h1m3 0h2m4 0h1m3 0h1M2 12.5h1m1 0h7m2 0h2m1 0h1m2 0h2m2 0h2m2 0h1m2 0h1m2 0h1m2 0h1M0 13.5h2m1 0h1m1 0h1m1 0h1m1 0h2m1 0h2m1 0h7m1 0h2m2 0h2m2 0h1m1 0h1M4 14.5h1m1 0h1m1 0h1m5 0h2m1 0h1m4 0h1m3 0h4m1 0h3m1 0h2M0 15.5h1m1 0h2m1 0h1m1 0h1m1 0h1m1 0h4m1 0h3m3 0h1m5 0h1m2 0h1m1 0h4M1 16.5h4m1 0h2m6 0h3m5 0h5m1 0h1m1 0h1m1 0h1m1 0h3M2 17.5h3m3 0h4m5 0h2m1 0h2m1 0h1m3 0h2m2 0h1m1 0h3M0 18.5h1m1 0h1m2 0h2m4 0h1m1 0h3m4 0h1m2 0h2m1 0h2m1 0h2m1 0h1m3 0h1M1 19.5h1m2 0h1m3 0h1m3 0h2m5 0h2m2 0h1m2 0h2m1 0h2m5 0h1M0 20.5h3m2 0h5m5 0h3m1 0h1m2 0h6m1 0h2m1 0h3M0 21.5h2m1 0h3m1 0h1m2 0h2m1 0h1m1 0h1m2 0h2m1 0h3m1 0h3m1 0h1m2 0h1m1 0h1M2 22.5h2m2 0h1m1 0h2m1 0h2m2 0h2m1 0h1m2 0h1m4 0h4m1 0h3m1 0h2M0 23.5h2m1 0h1m4 0h1m5 0h1m1 0h1m2 0h2m2 0h1m2 0h4m1 0h3m2 0h1M2 24.5h2m1 0h4m1 0h1m1 0h1m1 0h1m1 0h3m1 0h1m3 0h1m2 0h2m1 0h2m3 0h1M0 25.5h4m1 0h1m1 0h1m1 0h2m2 0h2m1 0h2m3 0h3m1 0h1m1 0h2m2 0h1m1 0h2M0 26.5h1m2 0h4m1 0h1m1 0h2m1 0h1m3 0h1m3 0h1m3 0h1m1 0h5m3 0h2M0 27.5h1m2 0h1m4 0h2m4 0h2m2 0h1m5 0h1m2 0h1m1 0h1m1 0h1m2 0h3M0 28.5h1m1 0h2m2 0h5m2 0h2m2 0h1m1 0h1m2 0h4m2 0h7M8 29.5h3m1 0h1m2 0h1m1 0h4m2 0h1m1 0h1m2 0h1m3 0h1m2 0h1M0 30.5h7m5 0h4m3 0h1m1 0h1m1 0h1m4 0h1m1 0h1m1 0h1m3 0h1M0 31.5h1m5 0h1m3 0h2m1 0h2m2 0h2m4 0h2m1 0h3m3 0h1m2 0h2M0 32.5h1m1 0h3m1 0h1m2 0h3m4 0h1m5 0h1m1 0h2m1 0h6m1 0h1M0 33.5h1m1 0h3m1 0h1m2 0h1m1 0h4m1 0h1m1 0h2m1 0h3m1 0h2m3 0h1m2 0h1m2 0h1M0 34.5h1m1 0h3m1 0h1m2 0h3m1 0h1m1 0h2m1 0h1m1 0h3m2 0h2m1 0h1m5 0h3M0 35.5h1m5 0h1m3 0h1m3 0h1m5 0h1m2 0h1m4 0h3m1 0h2m2 0h1M0 36.5h7m1 0h2m2 0h1m2 0h2m3 0h1m3 0h1m3 0h4m1 0h1m2 0h1"/></svg>
+</div>
+<aside>Демо — это настоящий код приложения, собранный для браузера. Наведите камеру на QR-код или откройте ссылку. В настройках нажмите «Заполнить примером» — появятся три вымышленных подопечных с историей замеров и тренировок.</aside>
+</section>
+</main>
+
+<div class="bar" aria-hidden="true"></div>
+<p class="rotate" role="note">Поверните телефон — слайды станут крупнее</p>
+<nav class="controls" aria-label="Слайды">
+  <button type="button" data-go="prev" aria-label="Предыдущий слайд"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+  <span class="counter" aria-live="polite">1 / 13</span>
+  <button type="button" data-go="next" aria-label="Следующий слайд"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+  <button type="button" data-go="fullscreen" aria-label="Во весь экран"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/></svg></button>
+</nav>
+
+<script>
+(function () {
+  var stage = document.querySelector('.stage');
+  var slides = Array.prototype.slice.call(stage.children);
+  var total = slides.length;
+  var counter = document.querySelector('.counter');
+  var bar = document.querySelector('.bar');
+  var controls = document.querySelector('.controls');
+  var prevButton = document.querySelector('[data-go="prev"]');
+  var nextButton = document.querySelector('[data-go="next"]');
+  var fullscreenButton = document.querySelector('[data-go="fullscreen"]');
+  var index = 0;
+
+  function fit() {
+    var w = window.innerWidth, h = window.innerHeight;
+    var scale = Math.min(w / 1920, h / 1080);
+    var x = (w - 1920 * scale) / 2, y = (h - 1080 * scale) / 2;
+    stage.style.transform = 'translate(' + x + 'px,' + y + 'px) scale(' + scale + ')';
+  }
+
+  function slideFromHash() {
+    var n = parseInt(location.hash.slice(1), 10);
+    return isNaN(n) ? 0 : n - 1;
+  }
+
+  // Номер слайда хранится в адресе (#3): ссылку можно отправить прямо на нужный слайд
+  function show(i, updateHash) {
+    index = Math.max(0, Math.min(total - 1, i));
+    slides.forEach(function (slide, k) {
+      var active = k === index;
+      slide.classList.toggle('is-active', active);
+      slide.setAttribute('aria-hidden', active ? 'false' : 'true');
+      slide.inert = !active;
+    });
+    counter.textContent = (index + 1) + ' / ' + total;
+    bar.style.width = ((index + 1) / total * 100) + '%';
+    prevButton.disabled = index === 0;
+    nextButton.disabled = index === total - 1;
+    if (updateHash) history.replaceState(null, '', '#' + (index + 1));
+  }
+
+  function go(step) { show(index + step, true); }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.altKey || e.ctrlKey || e.metaKey) return;
+    // Enter и пробел на кнопке или ссылке — это нажатие на неё, а не переход к следующему слайду
+    if ((e.key === ' ' || e.key === 'Enter') && e.target.closest && e.target.closest('button, a')) return;
+    if (['ArrowRight', 'ArrowDown', 'PageDown', ' ', 'Enter'].indexOf(e.key) >= 0) { e.preventDefault(); go(1); }
+    else if (['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'].indexOf(e.key) >= 0) { e.preventDefault(); go(-1); }
+    else if (e.key === 'Home') { show(0, true); }
+    else if (e.key === 'End') { show(total - 1, true); }
+    else if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') { toggleFullscreen(); }
+  });
+
+  prevButton.addEventListener('click', function () { go(-1); });
+  nextButton.addEventListener('click', function () { go(1); });
+
+  // Нажатие в любом месте экрана: левая треть — назад, остальное — вперёд.
+  // Кнопки внизу и ссылки на слайдах работают как обычно.
+  var swiped = false;
+  document.addEventListener('click', function (e) {
+    if (swiped) { swiped = false; return; }
+    if (e.target.closest('a, .controls')) return;
+    go(e.clientX < window.innerWidth * 0.3 ? -1 : 1);
+  });
+
+  var startX = 0, startY = 0;
+  document.addEventListener('touchstart', function (e) {
+    startX = e.touches[0].clientX; startY = e.touches[0].clientY;
+  }, { passive: true });
+  document.addEventListener('touchend', function (e) {
+    if (e.target.closest && e.target.closest('.controls')) return;
+    var dx = e.changedTouches[0].clientX - startX, dy = e.changedTouches[0].clientY - startY;
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) { swiped = true; go(dx < 0 ? 1 : -1); }
+  }, { passive: true });
+
+  var root = document.documentElement;
+  var canFullscreen = !!(root.requestFullscreen || root.webkitRequestFullscreen);
+  if (!canFullscreen) fullscreenButton.hidden = true;
+  function toggleFullscreen() {
+    if (!canFullscreen) return;
+    if (document.fullscreenElement || document.webkitFullscreenElement) {
+      (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+    } else {
+      (root.requestFullscreen || root.webkitRequestFullscreen).call(root);
+    }
+  }
+  fullscreenButton.addEventListener('click', toggleFullscreen);
+
+  // Кнопки становятся почти прозрачными, если мышь не двигается, — не отвлекают от слайда
+  var idleTimer = null;
+  function wake() {
+    controls.classList.remove('is-idle');
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(function () { controls.classList.add('is-idle'); }, 2500);
+  }
+  ['mousemove', 'touchstart', 'keydown'].forEach(function (type) { document.addEventListener(type, wake, { passive: true }); });
+
+  window.addEventListener('resize', fit);
+  window.addEventListener('hashchange', function () { show(slideFromHash(), false); });
+  fit();
+  show(slideFromHash(), false);
+  wake();
+})();
+</script>
+</body>
+</html>

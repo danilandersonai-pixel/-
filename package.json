@@ -62,7 +62,8 @@
     "test": "jest",
     "typecheck": "tsc --noEmit",
     "preview:build": "node scripts/build-preview.mjs",
-    "demo:build": "node scripts/build-preview.mjs docs/demo/app.html"
+    "demo:build": "node scripts/build-preview.mjs docs/demo/app.html",
+    "presentation:build": "node scripts/build-presentation.mjs"
   },
   "private": true,
   "jest": {
