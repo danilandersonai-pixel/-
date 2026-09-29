@@ -264,3 +264,31 @@ export const goals = sqliteTable(
 export type Goal = typeof goals.$inferSelect;
 export type GoalMetric = Goal['metric'];
 export type GoalFields = Pick<Goal, 'metric' | 'targetValue' | 'startDate'> & Partial<Pick<Goal, 'targetDate'>>;
+
+/**
+ * Абонемент: сколько тренировок куплено и с какого дня (по желанию — до какого).
+ * Сколько использовано, не храним: считаем проведённые тренировки с даты начала.
+ * Оплаты не ведём — это только счётчик.
+ */
+export const memberships = sqliteTable(
+  'memberships',
+  {
+    id: text('id').primaryKey(),
+    clientId: text('client_id')
+      .notNull()
+      .references(() => clients.id),
+    /** Сколько тренировок в абонементе */
+    total: integer('total').notNull(),
+    /** С какого дня действует, ГГГГ-ММ-ДД */
+    startDate: text('start_date').notNull(),
+    /** До какого дня, включительно; null — без срока */
+    endDate: text('end_date'),
+    notes: text('notes'),
+    deletedAt: integer('deleted_at'),
+    ...timestamps,
+  },
+  (table) => [index('memberships_client_idx').on(table.clientId)],
+);
+
+export type Membership = typeof memberships.$inferSelect;
+export type MembershipFields = Pick<Membership, 'total' | 'startDate'> & Partial<Pick<Membership, 'endDate' | 'notes'>>;

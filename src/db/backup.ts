@@ -12,7 +12,19 @@ import {
 
 import { notifyChange } from './changes';
 import { db } from './database';
-import { clients, consents, goals, health, measurements, nutritionPlans, photos, sets, workoutExercises, workouts } from './schema';
+import {
+  clients,
+  consents,
+  goals,
+  health,
+  measurements,
+  memberships,
+  nutritionPlans,
+  photos,
+  sets,
+  workoutExercises,
+  workouts,
+} from './schema';
 
 const tables = {
   clients,
@@ -25,6 +37,7 @@ const tables = {
   sets,
   nutrition_plans: nutritionPlans,
   goals,
+  memberships,
 } as const;
 
 async function readAllTables(): Promise<Record<BackupTable, BackupRow[]>> {
@@ -39,6 +52,7 @@ async function readAllTables(): Promise<Record<BackupTable, BackupRow[]>> {
     sets: await db.select().from(sets),
     nutrition_plans: await db.select().from(nutritionPlans),
     goals: await db.select().from(goals),
+    memberships: await db.select().from(memberships),
   };
 }
 
@@ -87,7 +101,7 @@ export async function applyRestorePlan(plan: RestorePlan): Promise<void> {
   for (const ids of chunks(plan.staleExerciseIds)) {
     await db.delete(workoutExercises).where(inArray(workoutExercises.id, ids));
   }
-  for (const table of ['clients', 'consents', 'health', 'measurements', 'photos', 'workouts', 'nutrition', 'goals'] as const) {
+  for (const table of ['clients', 'consents', 'health', 'measurements', 'photos', 'workouts', 'nutrition', 'goals', 'memberships'] as const) {
     notifyChange(table);
   }
 }

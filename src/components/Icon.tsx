@@ -51,4 +51,6 @@ export const icons = {
   table: { ios: 'tablecells', android: 'table_chart', web: 'table_chart' },
   compare: { ios: 'arrow.left.arrow.right', android: 'compare_arrows', web: 'compare_arrows' },
   goal: { ios: 'flag', android: 'flag', web: 'flag' },
+  ticket: { ios: 'ticket', android: 'confirmation_number', web: 'confirmation_number' },
+  timer: { ios: 'timer', android: 'timer', web: 'timer' },
 } satisfies Record<string, IconName>;

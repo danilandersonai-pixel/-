@@ -54,3 +54,9 @@ export function parseDecimal(input: string): number | null {
 export function fill(template: string, params: Record<string, string | number>): string {
   return template.replace(/\{(\w+)\}/g, (match, key: string) => (key in params ? String(params[key]) : match));
 }
+
+/** Время таймера: 85 → «1:25», 5 → «0:05» */
+export function formatClock(totalSeconds: number): string {
+  const seconds = Math.max(0, Math.round(totalSeconds));
+  return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
+}

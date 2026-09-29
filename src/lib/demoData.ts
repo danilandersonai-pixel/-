@@ -5,6 +5,7 @@ import type {
   ClientFields,
   ExerciseInput,
   GoalFields,
+  MembershipFields,
   HealthFields,
   MeasurementFields,
   NutritionFields,
@@ -21,6 +22,7 @@ export type DemoClient = {
   workouts: { id: string; fields: WorkoutFields; exercises: ExerciseInput[] }[];
   nutrition: NutritionFields | null;
   goal: GoalFields | null;
+  membership: MembershipFields | null;
 };
 
 export const DEMO_NOTE = 'Пример — вымышленный подопечный. Можно перенести в архив.';
@@ -137,6 +139,8 @@ export function buildDemoData(todayIso: string, makeId: () => string): DemoClien
       startDate: addDays(todayIso, -(annaCount - 1) * 14),
       targetDate: addDays(todayIso, 150),
     },
+    // Абонемент почти закончился — видно напоминание о продлении
+    membership: { total: 12, startDate: addDays(todayIso, -27), endDate: addDays(todayIso, 30) },
   };
 
   // Игорь: набор массы, раз в месяц только обхваты — считается по методу ВМС
@@ -186,6 +190,7 @@ export function buildDemoData(todayIso: string, makeId: () => string): DemoClien
       notes: 'Профицит около 300 ккал, взвешиваться раз в неделю утром.',
     },
     goal: null,
+    membership: { total: 12, startDate: addDays(todayIso, -26), endDate: null },
   };
 
   // Ольга: здоровье и тонус, два замера (последний 35 дней назад — пора новый), есть противопоказание
@@ -217,6 +222,7 @@ export function buildDemoData(todayIso: string, makeId: () => string): DemoClien
     ]),
     nutrition: null,
     goal: null,
+    membership: null,
   };
 
   return [anna, igor, olga];

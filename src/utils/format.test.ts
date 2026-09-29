@@ -1,4 +1,4 @@
-import { fill, formatDate, formatDateTime, formatInteger, formatMeasure, formatNumber, lowerFirst, parseDecimal } from './format';
+import { fill, formatClock, formatDate, formatDateTime, formatInteger, formatMeasure, formatNumber, lowerFirst, parseDecimal } from './format';
 
 describe('formatNumber', () => {
   it('ставит запятую вместо точки', () => {
@@ -68,5 +68,14 @@ describe('formatInteger', () => {
 describe('lowerFirst', () => {
   it('делает первую букву строчной', () => {
     expect(lowerFirst('По складкам (Jackson–Pollock)')).toBe('по складкам (Jackson–Pollock)');
+  });
+});
+
+describe('formatClock', () => {
+  it('минуты и секунды', () => {
+    expect(formatClock(85)).toBe('1:25');
+    expect(formatClock(5)).toBe('0:05');
+    expect(formatClock(180)).toBe('3:00');
+    expect(formatClock(-3)).toBe('0:00');
   });
 });

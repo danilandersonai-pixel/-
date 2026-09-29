@@ -3,6 +3,7 @@
 import { applyRestorePlan, exportBackup, planBackupRestore } from './backup';
 import { fillDemoData } from './demo';
 import { deleteGoal, getGoal, saveGoal } from './goals';
+import { deleteMembership, getMembership, saveMembership } from './memberships';
 import { getClient, listActiveClients, listArchivedClients, saveClient, setClientArchived } from './clients';
 import { getActiveConsent, giveConsent, revokeConsent } from './consents';
 import { getHealth, saveHealth } from './health';
@@ -17,6 +18,7 @@ import {
   listPlannedFrom,
   listWorkouts,
   listWorkoutsBetween,
+  planWorkouts,
   saveWorkout,
 } from './workouts';
 
@@ -191,6 +193,29 @@ describe('цели', () => {
     expect(await getGoal('c-goal')).toBeNull();
     // строка осталась — для резервной копии и будущей синхронизации
     expect((await exportBackup()).tables.goals.some((g) => g.id === 'g1')).toBe(true);
+  });
+});
+
+describe('серия тренировок', () => {
+  it('создаёт запланированные тренировки с временем и длительностью', async () => {
+    await makeClient('c-series', 'Сергей');
+    expect(await planWorkouts('c-series', ['2026-10-01', '2026-10-05'], { startTime: '19:00', durationMin: 60 })).toBe(2);
+    const list = await listWorkouts('c-series');
+    expect(list.map((w) => [w.date, w.status, w.startTime, w.durationMin])).toEqual([
+      ['2026-10-05', 'planned', '19:00', 60],
+      ['2026-10-01', 'planned', '19:00', 60],
+    ]);
+  });
+});
+
+describe('абонементы', () => {
+  it('действующий — с последней даты начала, удаление пометкой', async () => {
+    await makeClient('c-mem', 'Глеб');
+    await saveMembership('m-old', 'c-mem', { total: 8, startDate: '2026-08-01' });
+    await saveMembership('m-new', 'c-mem', { total: 12, startDate: '2026-09-01', endDate: '2026-10-31' });
+    expect(await getMembership('c-mem')).toMatchObject({ id: 'm-new', total: 12, endDate: '2026-10-31', notes: null });
+    await deleteMembership('m-new');
+    expect((await getMembership('c-mem'))?.id).toBe('m-old');
   });
 });
 

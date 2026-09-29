@@ -2,6 +2,7 @@ import { and, asc, between, count, desc, eq, gte, inArray, isNull, ne, notInArra
 
 import { notifyChange } from './changes';
 import { db } from './database';
+import { newId } from './ids';
 import type { ExerciseSession } from '@/lib/records';
 
 import {
@@ -187,6 +188,18 @@ export async function saveWorkout(
       );
   }
   notifyChange('workouts');
+}
+
+/** Серия запланированных тренировок в указанные даты (без упражнений). Возвращает, сколько создано. */
+export async function planWorkouts(
+  clientId: string,
+  dates: string[],
+  fields: Pick<WorkoutFields, 'startTime' | 'durationMin'>,
+): Promise<number> {
+  for (const date of dates) {
+    await saveWorkout(newId(), clientId, { ...fields, date, status: 'planned' }, []);
+  }
+  return dates.length;
 }
 
 /** Удаление после подтверждения: помечаем тренировку, упражнения остаются при ней */

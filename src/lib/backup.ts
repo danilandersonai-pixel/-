@@ -22,6 +22,7 @@ export const backupTables = [
   'sets',
   'nutrition_plans',
   'goals',
+  'memberships',
 ] as const;
 
 export type BackupTable = (typeof backupTables)[number];
@@ -130,6 +131,7 @@ const requiredFields: Record<BackupTable, Record<string, FieldType>> = {
   sets: { exerciseId: 'string', position: 'number' },
   nutrition_plans: { clientId: 'string', startDate: 'string' },
   goals: { clientId: 'string', metric: 'string', targetValue: 'number', startDate: 'string' },
+  memberships: { clientId: 'string', total: 'number', startDate: 'string' },
 };
 
 const allowedValues: Partial<Record<BackupTable, Record<string, readonly (string | null)[]>>> = {
@@ -198,6 +200,7 @@ const parentOf: Partial<Record<BackupTable, { field: string; table: BackupTable 
   workouts: { field: 'clientId', table: 'clients' },
   nutrition_plans: { field: 'clientId', table: 'clients' },
   goals: { field: 'clientId', table: 'clients' },
+  memberships: { field: 'clientId', table: 'clients' },
 };
 
 function byId(rows: BackupRow[]): Map<string, BackupRow> {

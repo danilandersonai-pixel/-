@@ -1,5 +1,5 @@
 import { formToWorkoutData, newWorkoutFormValues, workoutToFormValues } from './workoutForm';
-import { nextWorkoutByClient, workoutStats, workoutVolume } from './workouts';
+import { nextWorkoutByClient, recurringDates, weekdayIndex, workoutStats, workoutVolume } from './workouts';
 
 describe('статистика тренировок', () => {
   it('считает только проведённые', () => {
@@ -75,5 +75,19 @@ describe('форма тренировки', () => {
     const back = formToWorkoutData(workoutToFormValues(workout, exercises));
     expect(back.fields).toMatchObject({ date: '2026-09-29', startTime: '07:00', durationMin: 60, wellbeing: 4, notes: 'Хорошо' });
     expect(back.exercises).toEqual(exercises);
+  });
+});
+
+describe('серия тренировок', () => {
+  it('день недели: понедельник — 0', () => {
+    expect(weekdayIndex('2026-09-28')).toBe(0);
+    expect(weekdayIndex('2026-10-04')).toBe(6);
+  });
+
+  it('пн и чт на две недели вперёд, занятые дни пропускаются, сам день старта — нет', () => {
+    // 29.09.2026 — вторник
+    expect(recurringDates('2026-09-29', [0, 3], 2, new Set(['2026-10-05']))).toEqual(['2026-10-01', '2026-10-08', '2026-10-12']);
+    expect(recurringDates('2026-09-28', [0], 1, new Set())).toEqual(['2026-10-05']);
+    expect(recurringDates('2026-09-29', [], 4, new Set())).toEqual([]);
   });
 });

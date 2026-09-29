@@ -5,10 +5,12 @@ import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { EmptyState } from '@/components/EmptyState';
 import { icons } from '@/components/Icon';
+import { MembershipCard } from '@/components/MembershipCard';
 import { RecordsCard } from '@/components/RecordsCard';
 import { StatTile } from '@/components/StatTile';
 import { WorkoutRow } from '@/components/WorkoutRow';
 import type { Client } from '@/db/schema';
+import { useMembership } from '@/db/useMembership';
 import { useExerciseSessions, useWorkouts } from '@/db/useWorkouts';
 import { ru } from '@/i18n/ru';
 import { exerciseRecords, recordWorkoutIds } from '@/lib/records';
@@ -24,6 +26,7 @@ const t = ru.workout;
 export function ClientWorkoutsTab({ client }: { client: Client }) {
   const { data: workouts } = useWorkouts(client.id);
   const { data: sessions } = useExerciseSessions(client.id);
+  const { data: membership } = useMembership(client.id);
   const openNew = () => router.push({ pathname: '/client/[id]/workout', params: { id: client.id } });
   const openWorkout = (wid: string) => router.push({ pathname: '/client/[id]/workout', params: { id: client.id, wid } });
 
@@ -32,12 +35,17 @@ export function ClientWorkoutsTab({ client }: { client: Client }) {
   }
   if (workouts.length === 0) {
     return (
-      <EmptyState
-        icon={icons.workouts}
-        title={t.listEmptyTitle}
-        hint={t.listEmptyHint}
-        action={<Button title={t.emptyAction} icon={icons.add} onPress={openNew} />}
-      />
+      <View style={styles.tab}>
+        <EmptyState
+          icon={icons.workouts}
+          title={t.listEmptyTitle}
+          hint={t.listEmptyHint}
+          action={<Button title={t.emptyAction} icon={icons.add} onPress={openNew} />}
+        />
+        {membership !== undefined ? (
+          <MembershipCard clientId={client.id} membership={membership} doneDates={[]} todayIso={toIsoDate(new Date())} />
+        ) : null}
+      </View>
     );
   }
 
@@ -54,6 +62,14 @@ export function ClientWorkoutsTab({ client }: { client: Client }) {
         <StatTile label={t.statsHours} value={fill(t.hours, { value: formatMeasure(stats.minutes / 60) })} />
       </View>
       <StatTile label={t.statsNext} value={next ? shortWhen(next.date, next.startTime) : t.statsNone} />
+      {membership !== undefined ? (
+        <MembershipCard
+          clientId={client.id}
+          membership={membership}
+          doneDates={workouts.filter((w) => w.status === 'done').map((w) => w.date)}
+          todayIso={today}
+        />
+      ) : null}
       <Button title={t.add} icon={icons.add} onPress={openNew} />
       <RecordsCard
         records={records}

@@ -3,6 +3,7 @@
 import type { ExerciseSession } from '@/lib/records';
 
 import { notifyChange } from './changes';
+import { newId } from './ids';
 import type { ExerciseInput, Workout, WorkoutExercise, WorkoutFields, WorkoutSet } from './schema';
 import { browserTable } from './webTable';
 import type { WorkoutDetails, WorkoutSummary } from './workouts';
@@ -145,6 +146,17 @@ const api = {
     notifyChange('workouts');
   },
 
+  async planWorkouts(
+    clientId: string,
+    dates: string[],
+    fields: Pick<WorkoutFields, 'startTime' | 'durationMin'>,
+  ): Promise<number> {
+    for (const date of dates) {
+      await api.saveWorkout(newId(), clientId, { ...fields, date, status: 'planned' }, []);
+    }
+    return dates.length;
+  },
+
   async deleteWorkout(id: string): Promise<void> {
     const existing = workoutTable.get(id);
     if (existing) {
@@ -163,5 +175,6 @@ export const {
   getLastWorkoutExercises,
   listExerciseSessions,
   saveWorkout,
+  planWorkouts,
   deleteWorkout,
 } = api;

@@ -4,6 +4,7 @@ import { toIsoDate } from '@/utils/date';
 import { saveClient } from './clients';
 import { giveConsent } from './consents';
 import { saveGoal } from './goals';
+import { saveMembership } from './memberships';
 import { saveHealth } from './health';
 import { newId } from './ids';
 import { saveMeasurement } from './measurements';
@@ -34,6 +35,9 @@ export async function fillDemoData(): Promise<number> {
     }
     if (client.goal) {
       await saveGoal(newId(), client.id, client.goal);
+    }
+    if (client.membership) {
+      await saveMembership(newId(), client.id, client.membership);
     }
   }
   return demo.length;
