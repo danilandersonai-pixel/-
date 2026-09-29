@@ -18,6 +18,11 @@ export function formatInteger(value: number): string {
   return sign + String(Math.abs(rounded)).replace(/\B(?=(\d{3})+(?!\d))/g, '\u202F');
 }
 
+/** Первая буква строчная — чтобы вставить название в середину фразы */
+export function lowerFirst(text: string): string {
+  return text.charAt(0).toLocaleLowerCase('ru') + text.slice(1);
+}
+
 /** Дата в формате ДД.ММ.ГГГГ */
 export function formatDate(date: Date): string {
   const day = String(date.getDate()).padStart(2, '0');

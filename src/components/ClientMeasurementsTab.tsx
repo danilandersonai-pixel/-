@@ -43,6 +43,12 @@ export function ClientMeasurementsTab({ client }: { client: Client }) {
         variant="secondary"
         onPress={() => router.push({ pathname: '/client/[id]/progress', params: { id: client.id } })}
       />
+      <Button
+        title={ru.report.open}
+        icon={icons.doc}
+        variant="secondary"
+        onPress={() => router.push({ pathname: '/client/[id]/report', params: { id: client.id } })}
+      />
       <Card>
         {measurements.map((m, index) => {
           const composition = compositions[index];

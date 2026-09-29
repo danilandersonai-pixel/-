@@ -41,7 +41,8 @@
           "cameraPermission": "Нужно, чтобы снимать фото «до/после» подопечных.",
           "microphonePermission": false
         }
-      ]
+      ],
+      "expo-sharing"
     ],
     "experiments": {
       "typedRoutes": true,

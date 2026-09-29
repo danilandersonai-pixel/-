@@ -12,7 +12,7 @@ import { ru } from '@/i18n/ru';
 import { progressMetrics, progressSeries, type ProgressMetricId } from '@/lib/progress';
 import { radius, spacing, useTheme } from '@/theme';
 import { isoToRuDate } from '@/utils/date';
-import { fill, formatMeasure } from '@/utils/format';
+import { fill, formatMeasure, lowerFirst } from '@/utils/format';
 
 type ProgressChartsProps = {
   client: Client;
@@ -71,7 +71,7 @@ export function ProgressCharts({ client, measurements }: ProgressChartsProps) {
         )}
         {method ? (
           <AppText variant="caption" color="textTertiary">
-            {fill(t.method, { method: ru.methods[method].charAt(0).toLowerCase() + ru.methods[method].slice(1) })}
+            {fill(t.method, { method: lowerFirst(ru.methods[method]) })}
           </AppText>
         ) : null}
       </View>

@@ -1,4 +1,4 @@
-import { fill, formatDate, formatInteger, formatMeasure, formatNumber, parseDecimal } from './format';
+import { fill, formatDate, formatInteger, formatMeasure, formatNumber, lowerFirst, parseDecimal } from './format';
 
 describe('formatNumber', () => {
   it('ставит запятую вместо точки', () => {
@@ -58,5 +58,11 @@ describe('formatInteger', () => {
     expect(formatInteger(950.6)).toBe('951');
     expect(formatInteger(1234567)).toBe('1\u202F234\u202F567');
     expect(formatInteger(-70)).toBe('−70');
+  });
+});
+
+describe('lowerFirst', () => {
+  it('делает первую букву строчной', () => {
+    expect(lowerFirst('По складкам (Jackson–Pollock)')).toBe('по складкам (Jackson–Pollock)');
   });
 });

@@ -41,4 +41,6 @@ export const icons = {
   chevronLeft: { ios: 'chevron.left', android: 'chevron_left', web: 'chevron_left' },
   upcoming: { ios: 'calendar.badge.clock', android: 'event_upcoming', web: 'event_upcoming' },
   repeat: { ios: 'arrow.counterclockwise', android: 'history', web: 'history' },
+  doc: { ios: 'doc.text', android: 'description', web: 'description' },
+  backup: { ios: 'externaldrive', android: 'backup', web: 'backup' },
 } satisfies Record<string, IconName>;

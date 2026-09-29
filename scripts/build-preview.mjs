@@ -24,7 +24,7 @@ const roadmap = [
   { title: 'Прогресс: графики и фото «до/после»', status: 'done' },
   { title: 'Тренировки и календарь', status: 'done' },
   { title: 'Питание: калории и КБЖУ', status: 'done' },
-  { title: 'PDF-отчёт и резервная копия', status: 'next' },
+  { title: 'PDF-отчёт и резервная копия', status: 'done' },
 ];
 
 const mimeTypes = {
