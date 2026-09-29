@@ -1,0 +1,265 @@
+<title>Спортивный Треккер</title>
+<style>
+  /* Макет: слева «телефон» с приложением, справа панель с планом работ.
+     На узком экране приложение открывается на весь экран, панель скрыта. */
+  :root {
+    --stage: #E6E8EE;
+    --ink: #0F1115;
+    --ink-soft: #5B6270;
+    --line: #D5D9E1;
+    --accent: #4F46E5;
+    --accent-soft: #ECEBFF;
+    --done: #15803D;
+    --bezel: #111318;
+    --app-bg: #F4F5F7;
+    --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --stage: #050608;
+      --ink: #F2F4F7;
+      --ink-soft: #A3AAB6;
+      --line: #262A31;
+      --accent: #8B87FF;
+      --accent-soft: #25234A;
+      --done: #4ADE80;
+      --bezel: #2A2F37;
+      --app-bg: #0B0D10;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --stage: #050608;
+    --ink: #F2F4F7;
+    --ink-soft: #A3AAB6;
+    --line: #262A31;
+    --accent: #8B87FF;
+    --accent-soft: #25234A;
+    --done: #4ADE80;
+    --bezel: #2A2F37;
+    --app-bg: #0B0D10;
+    color-scheme: dark;
+  }
+
+  html { box-sizing: border-box; height: 100%; }
+  body {
+    height: 100%;
+    overflow: hidden;
+    background: var(--app-bg);
+    color: var(--ink);
+    font-family: var(--font-ui);
+  }
+  .stage { height: 100%; display: flex; }
+  .device { flex: 1; min-width: 0; display: flex; background: var(--app-bg); }
+  #root { display: flex; flex: 1; height: 100%; min-width: 0; }
+  .panel { display: none; }
+
+  @media (min-width: 780px) and (min-height: 560px) {
+    body { background: var(--stage); }
+    .stage {
+      box-sizing: border-box;
+      align-items: center;
+      justify-content: center;
+      gap: 56px;
+      padding-inline: 32px;
+      padding-block: 24px;
+    }
+    .device {
+      flex: 0 0 auto;
+      width: 390px;
+      height: min(844px, 100%);
+      border: 10px solid var(--bezel);
+      border-radius: 54px;
+      overflow: hidden;
+      /* position: fixed внутри приложения — относительно «телефона» */
+      transform: translateZ(0);
+      box-shadow: 0 40px 80px -32px rgb(8 10 14 / 0.45);
+    }
+    .panel {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      width: 340px;
+      max-height: 100%;
+      overflow-y: auto;
+    }
+  }
+
+  .panel__head { display: flex; flex-direction: column; gap: 10px; }
+  .eyebrow {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .panel h1 {
+    margin: 0;
+    font-size: 30px;
+    line-height: 1.15;
+    font-weight: 700;
+    text-wrap: balance;
+  }
+  .lead { margin: 0; font-size: 15px; line-height: 1.5; color: var(--ink-soft); max-width: 36ch; }
+
+  .section-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin: 0 0 12px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .section-title__count { font-variant-numeric: tabular-nums; letter-spacing: 0; text-transform: none; }
+
+  .switch {
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+  }
+  .switch button {
+    flex: 1;
+    min-height: 36px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--ink-soft);
+    font: 500 14px var(--font-ui);
+    cursor: pointer;
+  }
+  .switch button[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent); }
+  .switch button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+  .step {
+    display: grid;
+    grid-template-columns: 22px 1fr;
+    column-gap: 12px;
+    padding-block: 10px;
+    border-top: 1px solid var(--line);
+  }
+  .step:first-child { border-top: 0; }
+  .step__mark {
+    grid-row: span 2;
+    width: 18px;
+    height: 18px;
+    margin-top: 1px;
+    border: 2px solid var(--line);
+    border-radius: 50%;
+    box-sizing: border-box;
+    position: relative;
+  }
+  .step__title { font-size: 15px; line-height: 1.35; }
+  .step__status { font-size: 12px; line-height: 1.4; color: var(--ink-soft); }
+  .step--done .step__mark { background: var(--done); border-color: var(--done); }
+  .step--done .step__mark::after {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 2px;
+    width: 4px;
+    height: 8px;
+    border: solid var(--app-bg);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+  .step--done .step__status { color: var(--done); }
+  .step--next .step__mark { border-color: var(--accent); }
+  .step--next .step__status { color: var(--accent); }
+  .step--todo .step__title { color: var(--ink-soft); }
+
+  .updated { margin: 0; font-size: 12px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+</style>
+
+<div class="stage">
+  <div class="device">
+    <noscript>Для работы приложения нужен JavaScript.</noscript>
+    <div id="root"></div>
+  </div>
+
+  <aside class="panel" aria-label="О превью">
+    <div class="panel__head">
+      <p class="eyebrow">Превью приложения тренера</p>
+      <h1>Спортивный Треккер</h1>
+      <p class="lead">
+        Так приложение выглядит на телефоне. Вкладки внизу работают как в настоящем приложении.
+        Данные пока не сохраняются: база данных появится на следующем шаге.
+      </p>
+    </div>
+
+    <section>
+      <h2 class="section-title">Тема</h2>
+      <div class="switch" role="group" aria-label="Тема">
+        <button type="button" id="theme-system" data-theme-choice="system">Как в системе</button>
+        <button type="button" id="theme-light" data-theme-choice="light">Светлая</button>
+        <button type="button" id="theme-dark" data-theme-choice="dark">Тёмная</button>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-title">План работ<span class="section-title__count">{{PROGRESS}}</span></h2>
+      <ol class="steps">
+          {{ROADMAP}}
+      </ol>
+    </section>
+
+    <p class="updated">Обновлено {{UPDATED}}</p>
+  </aside>
+</div>
+
+<script>
+  // Переключатель темы: ставит data-theme на <html>, приложение следит за этим атрибутом.
+  (function () {
+    var rootEl = document.documentElement;
+    var storageKey = 'sport-tracker-preview-theme';
+    var buttons = document.querySelectorAll('[data-theme-choice]');
+
+    function currentChoice() {
+      return rootEl.getAttribute('data-theme') || 'system';
+    }
+    function syncButtons() {
+      var choice = currentChoice();
+      buttons.forEach(function (button) {
+        button.setAttribute('aria-pressed', String(button.dataset.themeChoice === choice));
+      });
+    }
+    function apply(choice) {
+      if (choice === 'light' || choice === 'dark') {
+        rootEl.setAttribute('data-theme', choice);
+      } else {
+        rootEl.removeAttribute('data-theme');
+      }
+    }
+
+    try {
+      var saved = localStorage.getItem(storageKey);
+      if (saved) apply(saved);
+    } catch (e) {}
+
+    buttons.forEach(function (button) {
+      button.addEventListener('click', function () {
+        apply(button.dataset.themeChoice);
+        try {
+          localStorage.setItem(storageKey, button.dataset.themeChoice);
+        } catch (e) {}
+      });
+    });
+    new MutationObserver(syncButtons).observe(rootEl, { attributes: true, attributeFilter: ['data-theme'] });
+    syncButtons();
+  })();
+
+  // Навигация приложения строится от адреса страницы. Артефакт может открыться
+  // по любому пути, поэтому перед запуском приводим адрес к корню «/».
+  (function () {
+    try {
+      if (location.pathname !== '/') history.replaceState(null, '', '/');
+    } catch (e) {}
+  })();
+</script>
+<script>{{BUNDLE}}</script>

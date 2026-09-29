@@ -41,3 +41,6 @@ example
 # generated native folders
 /ios
 /android
+
+# web-превью для артефакта (собирается скриптом)
+/dist-preview
