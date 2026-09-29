@@ -31,6 +31,12 @@ const roadmap = [
   { title: 'Блок «Сегодня» и напоминания о замерах', status: 'done' },
   { title: 'Личные рекорды в упражнениях', status: 'done' },
   { title: 'Оформление «Энергия», иконка, выбор темы', status: 'done' },
+  { title: 'Тренер в PDF-отчёте, отчёт за любые даты', status: 'done' },
+  { title: 'Звонок и WhatsApp из карточки, выгрузка в Excel', status: 'done' },
+  { title: 'Цель с прогнозом, быстрый вес, сравнение, шторка', status: 'done' },
+  { title: 'Абонементы, серии тренировок, таймер отдыха', status: 'done' },
+  { title: 'Анкета готовности к нагрузкам PAR-Q', status: 'done' },
+  { title: 'Face ID, корзина, напоминания о копии и тренировках', status: 'done' },
 ];
 
 const mimeTypes = {

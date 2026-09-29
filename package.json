@@ -61,7 +61,8 @@
     "lint": "expo lint",
     "test": "jest",
     "typecheck": "tsc --noEmit",
-    "preview:build": "node scripts/build-preview.mjs"
+    "preview:build": "node scripts/build-preview.mjs",
+    "demo:build": "node scripts/build-preview.mjs docs/demo/app.html"
   },
   "private": true,
   "jest": {

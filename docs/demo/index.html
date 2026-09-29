@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Спортивный Треккер — демо</title>
+<meta name="description" content="Живое демо приложения для персонального тренера «Спортивный Треккер»">
+<meta name="theme-color" content="#0C0D0F">
+<style>
+  html, body { margin: 0; height: 100%; background: #0C0D0F; }
+  iframe { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; }
+</style>
+</head>
+<body>
+<!--
+  Приложение открывается внутри рамки: при запуске оно переписывает адрес страницы на «/»,
+  и без рамки обновление страницы на githack уводило бы на главную githack.
+  Сборка: npm run demo:build → docs/demo/app.html
+-->
+<iframe src="app.html" title="Спортивный Треккер — демо приложения"></iframe>
+</body>
+</html>
