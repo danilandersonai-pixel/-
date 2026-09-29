@@ -85,6 +85,8 @@ const styles = StyleSheet.create({
   input: {
     ...typography.body,
     flex: 1,
+    // Без этого поле в браузере не сжимается уже стандартной ширины и выталкивает единицу за край
+    minWidth: 0,
     alignSelf: 'stretch',
     paddingVertical: spacing.md,
     // В браузере вместо стандартной чёрной рамки фокуса — наша цветная граница

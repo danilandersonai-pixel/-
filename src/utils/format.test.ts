@@ -1,4 +1,4 @@
-import { fill, formatDate, formatMeasure, formatNumber, parseDecimal } from './format';
+import { fill, formatDate, formatInteger, formatMeasure, formatNumber, parseDecimal } from './format';
 
 describe('formatNumber', () => {
   it('ставит запятую вместо точки', () => {
@@ -49,5 +49,14 @@ describe('formatMeasure', () => {
     expect(formatMeasure(71)).toBe('71');
     expect(formatMeasure(72.46)).toBe('72,5');
     expect(formatMeasure(71.04)).toBe('71');
+  });
+});
+
+describe('formatInteger', () => {
+  it('разделяет тысячи', () => {
+    expect(formatInteger(2100)).toBe('2\u202F100');
+    expect(formatInteger(950.6)).toBe('951');
+    expect(formatInteger(1234567)).toBe('1\u202F234\u202F567');
+    expect(formatInteger(-70)).toBe('−70');
   });
 });

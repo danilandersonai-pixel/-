@@ -5,6 +5,7 @@ import { View } from 'react-native';
 import { Button } from '@/components/Button';
 import { ClientHealthTab } from '@/components/ClientHealthTab';
 import { ClientMeasurementsTab } from '@/components/ClientMeasurementsTab';
+import { ClientNutritionTab } from '@/components/ClientNutritionTab';
 import { ClientProfileTab } from '@/components/ClientProfileTab';
 import { ClientSummary } from '@/components/ClientSummary';
 import { ClientWorkoutsTab } from '@/components/ClientWorkoutsTab';
@@ -78,14 +79,12 @@ export default function ClientCardScreen() {
       content = <ClientWorkoutsTab client={client} />;
       break;
     case 'nutrition':
-      content = (
-        <EmptyState icon={icons.nutrition} title={ru.card.nutritionEmptyTitle} hint={ru.card.nutritionEmptyHint} />
-      );
+      content = <ClientNutritionTab client={client} />;
       break;
   }
 
-  // Статус «Сохранено» в заголовке показывают только вкладки с формами
-  const editable = tab === 'profile' || (tab === 'health' && consent !== null);
+  // Статус «Сохранено» в заголовке показывают вкладки с формами — они сами управляют заголовком
+  const editable = tab === 'profile' || tab === 'nutrition' || (tab === 'health' && consent !== null);
 
   return (
     <FormScreen>

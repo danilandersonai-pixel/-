@@ -25,6 +25,10 @@ export type Palette = {
   warning: string;
   /** Линия графиков (проверена на контраст и различимость для обеих тем) */
   chartLine: string;
+  /** Белки, жиры, углеводы — проверены на различимость, в том числе при нарушениях цветовосприятия */
+  macroProtein: string;
+  macroFat: string;
+  macroCarbs: string;
 };
 
 const light: Palette = {
@@ -42,6 +46,9 @@ const light: Palette = {
   danger: '#DC2626',
   warning: '#B45309',
   chartLine: '#4F46E5',
+  macroProtein: '#4F46E5',
+  macroFat: '#D97706',
+  macroCarbs: '#0D9488',
 };
 
 const dark: Palette = {
@@ -59,6 +66,9 @@ const dark: Palette = {
   danger: '#F87171',
   warning: '#FBBF24',
   chartLine: '#8580FA',
+  macroProtein: '#8580FA',
+  macroFat: '#C07A08',
+  macroCarbs: '#0F9E8E',
 };
 
 export const palettes: Record<ColorScheme, Palette> = { light, dark };

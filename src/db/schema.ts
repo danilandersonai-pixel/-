@@ -212,3 +212,28 @@ export type ExerciseInput = {
   name: string;
   sets: { id: string; reps: number | null; weight: number | null; restSec: number | null }[];
 };
+
+/** План питания: цель по калориям и КБЖУ с даты. Старые планы остаются в истории. */
+export const nutritionPlans = sqliteTable(
+  'nutrition_plans',
+  {
+    id: text('id').primaryKey(),
+    clientId: text('client_id')
+      .notNull()
+      .references(() => clients.id),
+    /** С какого дня действует, ГГГГ-ММ-ДД */
+    startDate: text('start_date').notNull(),
+    calories: integer('calories'),
+    /** Граммы */
+    protein: real('protein'),
+    fat: real('fat'),
+    carbs: real('carbs'),
+    notes: text('notes'),
+    ...timestamps,
+  },
+  (table) => [index('nutrition_plans_client_idx').on(table.clientId, table.startDate)],
+);
+
+export type NutritionPlan = typeof nutritionPlans.$inferSelect;
+export type NutritionFields = Pick<NutritionPlan, 'startDate'> &
+  Partial<Pick<NutritionPlan, 'calories' | 'protein' | 'fat' | 'carbs' | 'notes'>>;

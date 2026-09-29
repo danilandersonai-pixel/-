@@ -11,6 +11,13 @@ export function formatMeasure(value: number): string {
   return formatNumber(value, 1).replace(/,0$/, '');
 }
 
+/** Целое с пробелами между тысячами: 2100 → «2 100» (узкий неразрывный пробел) */
+export function formatInteger(value: number): string {
+  const rounded = Math.round(value);
+  const sign = rounded < 0 ? '−' : '';
+  return sign + String(Math.abs(rounded)).replace(/\B(?=(\d{3})+(?!\d))/g, '\u202F');
+}
+
 /** Дата в формате ДД.ММ.ГГГГ */
 export function formatDate(date: Date): string {
   const day = String(date.getDate()).padStart(2, '0');
