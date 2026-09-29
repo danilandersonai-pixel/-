@@ -9,8 +9,10 @@ import type {
   HealthFields,
   MeasurementFields,
   NutritionFields,
+  ParqFormFields,
   WorkoutFields,
 } from '@/db/schema';
+import { PARQ_VERSION, parqQuestions, serializeParqAnswers, type ParqAnswers } from '@/lib/parq';
 import { addDays } from '@/utils/date';
 
 export type DemoClient = {
@@ -23,11 +25,18 @@ export type DemoClient = {
   nutrition: NutritionFields | null;
   goal: GoalFields | null;
   membership: MembershipFields | null;
+  parq: ParqFormFields | null;
 };
 
 export const DEMO_NOTE = 'Пример — вымышленный подопечный. Можно перенести в архив.';
 
 type ExerciseTemplate = { name: string; reps: number; weight: number; step: number; sets: number };
+
+/** Анкета PAR-Q: на все вопросы «Нет», кроме перечисленных */
+function parqForm(date: string, yes: ParqAnswers, notes: string | null = null): ParqFormFields {
+  const answers: ParqAnswers = { ...Object.fromEntries(parqQuestions.map((q) => [q, false])), ...yes };
+  return { date, version: PARQ_VERSION, answers: serializeParqAnswers(answers), notes };
+}
 
 function round(value: number, step = 0.1): number {
   return Math.round(value / step) * step;
@@ -141,6 +150,7 @@ export function buildDemoData(todayIso: string, makeId: () => string): DemoClien
     },
     // Абонемент почти закончился — видно напоминание о продлении
     membership: { total: 12, startDate: addDays(todayIso, -27), endDate: addDays(todayIso, 30) },
+    parq: parqForm(addDays(todayIso, -27), {}),
   };
 
   // Игорь: набор массы, раз в месяц только обхваты — считается по методу ВМС
@@ -191,6 +201,7 @@ export function buildDemoData(todayIso: string, makeId: () => string): DemoClien
     },
     goal: null,
     membership: { total: 12, startDate: addDays(todayIso, -26), endDate: null },
+    parq: parqForm(addDays(todayIso, -90), { joints: true }, 'Протрузия L5–S1. Невролог разрешил тренировки без осевой нагрузки.'),
   };
 
   // Ольга: здоровье и тонус, два замера (последний 35 дней назад — пора новый), есть противопоказание
@@ -223,6 +234,8 @@ export function buildDemoData(todayIso: string, makeId: () => string): DemoClien
     nutrition: null,
     goal: null,
     membership: null,
+    // Анкета старше года — пример напоминания «пройдите заново»
+    parq: parqForm(addDays(todayIso, -400), { heart: true, medication: true }, 'Гипертония I степени, принимает препарат от давления. Терапевт допустил к тренировкам.'),
   };
 
   return [anna, igor, olga];

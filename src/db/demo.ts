@@ -9,6 +9,7 @@ import { saveHealth } from './health';
 import { newId } from './ids';
 import { saveMeasurement } from './measurements';
 import { saveNutritionPlan } from './nutrition';
+import { saveParq } from './parq';
 import { saveWorkout } from './workouts';
 
 /**
@@ -38,6 +39,9 @@ export async function fillDemoData(): Promise<number> {
     }
     if (client.membership) {
       await saveMembership(newId(), client.id, client.membership);
+    }
+    if (client.parq) {
+      await saveParq(newId(), client.id, client.parq);
     }
   }
   return demo.length;

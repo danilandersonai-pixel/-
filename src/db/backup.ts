@@ -20,6 +20,7 @@ import {
   measurements,
   memberships,
   nutritionPlans,
+  parqForms,
   photos,
   sets,
   workoutExercises,
@@ -38,6 +39,7 @@ const tables = {
   nutrition_plans: nutritionPlans,
   goals,
   memberships,
+  parq_forms: parqForms,
 } as const;
 
 async function readAllTables(): Promise<Record<BackupTable, BackupRow[]>> {
@@ -53,6 +55,7 @@ async function readAllTables(): Promise<Record<BackupTable, BackupRow[]>> {
     nutrition_plans: await db.select().from(nutritionPlans),
     goals: await db.select().from(goals),
     memberships: await db.select().from(memberships),
+    parq_forms: await db.select().from(parqForms),
   };
 }
 
@@ -101,7 +104,7 @@ export async function applyRestorePlan(plan: RestorePlan): Promise<void> {
   for (const ids of chunks(plan.staleExerciseIds)) {
     await db.delete(workoutExercises).where(inArray(workoutExercises.id, ids));
   }
-  for (const table of ['clients', 'consents', 'health', 'measurements', 'photos', 'workouts', 'nutrition', 'goals', 'memberships'] as const) {
+  for (const table of ['clients', 'consents', 'health', 'measurements', 'photos', 'workouts', 'nutrition', 'goals', 'memberships', 'parq'] as const) {
     notifyChange(table);
   }
 }

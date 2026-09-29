@@ -37,7 +37,7 @@ const api = {
     }
     plan.staleSetIds.forEach((id) => table('sets').remove(id));
     plan.staleExerciseIds.forEach((id) => table('workout_exercises').remove(id));
-    for (const name of ['clients', 'consents', 'health', 'measurements', 'photos', 'workouts', 'nutrition', 'goals', 'memberships'] as const) {
+    for (const name of ['clients', 'consents', 'health', 'measurements', 'photos', 'workouts', 'nutrition', 'goals', 'memberships', 'parq'] as const) {
       notifyChange(name);
     }
   },

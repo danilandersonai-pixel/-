@@ -53,4 +53,5 @@ export const icons = {
   goal: { ios: 'flag', android: 'flag', web: 'flag' },
   ticket: { ios: 'ticket', android: 'confirmation_number', web: 'confirmation_number' },
   timer: { ios: 'timer', android: 'timer', web: 'timer' },
+  checklist: { ios: 'checklist', android: 'checklist', web: 'checklist' },
 } satisfies Record<string, IconName>;

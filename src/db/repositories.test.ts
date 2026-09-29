@@ -4,6 +4,7 @@ import { applyRestorePlan, exportBackup, planBackupRestore } from './backup';
 import { fillDemoData } from './demo';
 import { deleteGoal, getGoal, saveGoal } from './goals';
 import { deleteMembership, getMembership, saveMembership } from './memberships';
+import { deleteParq, getLatestParq, saveParq } from './parq';
 import { getClient, listActiveClients, listArchivedClients, saveClient, setClientArchived } from './clients';
 import { getActiveConsent, giveConsent, revokeConsent } from './consents';
 import { getHealth, saveHealth } from './health';
@@ -219,6 +220,20 @@ describe('абонементы', () => {
   });
 });
 
+describe('анкеты PAR-Q', () => {
+  it('последняя — по дате заполнения, удаление пометкой, есть в копии', async () => {
+    await makeClient('c-parq', 'Роман');
+    await saveParq('q-old', 'c-parq', { date: '2025-06-01', version: 'v1', answers: '{"heart":false}' });
+    await saveParq('q-new', 'c-parq', { date: '2026-09-01', version: 'v1', answers: '{"joints":true}', notes: 'Колено' });
+    expect(await getLatestParq('c-parq')).toMatchObject({ id: 'q-new', answers: '{"joints":true}', notes: 'Колено' });
+    await saveParq('q-new', 'c-parq', { date: '2026-09-01', version: 'v1', answers: '{"joints":false}' });
+    expect((await getLatestParq('c-parq'))?.answers).toBe('{"joints":false}');
+    expect((await exportBackup()).tables.parq_forms.some((f) => f.id === 'q-new')).toBe(true);
+    await deleteParq('q-new');
+    expect((await getLatestParq('c-parq'))?.id).toBe('q-old');
+  });
+});
+
 describe('восстановление из резервной копии', () => {
   it('сливает копию с данными на телефоне и повтор ничего не меняет', async () => {
     const backup = await exportBackup();
@@ -298,5 +313,6 @@ describe('демо-данные', () => {
     expect((await listMeasurements(anna?.id ?? '')).length).toBe(7);
     expect((await listWorkouts(anna?.id ?? '')).length).toBe(13);
     expect((await listNutritionPlans(anna?.id ?? '')).length).toBe(1);
+    expect((await getLatestParq(anna?.id ?? ''))?.answers).toContain('"heart":false');
   });
 });

@@ -292,3 +292,28 @@ export const memberships = sqliteTable(
 
 export type Membership = typeof memberships.$inferSelect;
 export type MembershipFields = Pick<Membership, 'total' | 'startDate'> & Partial<Pick<Membership, 'endDate' | 'notes'>>;
+
+/** Анкета готовности к нагрузкам (по PAR-Q+). Итог не храним — считается из ответов. */
+export const parqForms = sqliteTable(
+  'parq_forms',
+  {
+    id: text('id').primaryKey(),
+    clientId: text('client_id')
+      .notNull()
+      .references(() => clients.id),
+    /** Когда заполнена, ГГГГ-ММ-ДД */
+    date: text('date').notNull(),
+    /** Версия вопросов — если текст анкеты поменяется, старые ответы останутся понятными */
+    version: text('version').notNull(),
+    /** Ответы JSON-строкой: {"heart": false, "joints": true, …}; нет ключа — вопрос пропущен */
+    answers: text('answers').notNull(),
+    /** Пояснения к ответам «Да» */
+    notes: text('notes'),
+    deletedAt: integer('deleted_at'),
+    ...timestamps,
+  },
+  (table) => [index('parq_forms_client_idx').on(table.clientId)],
+);
+
+export type ParqForm = typeof parqForms.$inferSelect;
+export type ParqFormFields = Pick<ParqForm, 'date' | 'version' | 'answers'> & Partial<Pick<ParqForm, 'notes'>>;
