@@ -2,6 +2,8 @@ import { and, asc, between, count, desc, eq, gte, inArray, isNull, ne, notInArra
 
 import { notifyChange } from './changes';
 import { db } from './database';
+import type { ExerciseSession } from '@/lib/records';
+
 import {
   sets,
   workoutExercises,
@@ -84,6 +86,37 @@ async function loadExercises(workoutId: string): Promise<ExerciseInput[]> {
       .filter((set) => set.exerciseId === exercise.id)
       .map((set) => ({ id: set.id, reps: set.reps, weight: set.weight, restSec: set.restSec })),
   }));
+}
+
+/**
+ * Все упражнения проведённых тренировок подопечного с подходами — для личных рекордов.
+ * Один запрос: подходы вместе с упражнением и датой тренировки.
+ */
+export async function listExerciseSessions(clientId: string): Promise<ExerciseSession[]> {
+  const rows = await db
+    .select({
+      workoutId: workouts.id,
+      date: workouts.date,
+      exerciseId: workoutExercises.id,
+      name: workoutExercises.name,
+      reps: sets.reps,
+      weight: sets.weight,
+    })
+    .from(workoutExercises)
+    .innerJoin(workouts, eq(workoutExercises.workoutId, workouts.id))
+    .leftJoin(sets, eq(sets.exerciseId, workoutExercises.id))
+    .where(and(eq(workouts.clientId, clientId), eq(workouts.status, 'done'), isNull(workouts.deletedAt)))
+    .orderBy(asc(workouts.date), asc(workouts.createdAt), asc(workoutExercises.position), asc(sets.position));
+
+  const sessions = new Map<string, ExerciseSession>();
+  for (const row of rows) {
+    const session = sessions.get(row.exerciseId) ?? { workoutId: row.workoutId, date: row.date, name: row.name, sets: [] };
+    if (row.reps !== null || row.weight !== null) {
+      session.sets.push({ reps: row.reps, weight: row.weight });
+    }
+    sessions.set(row.exerciseId, session);
+  }
+  return [...sessions.values()];
 }
 
 /** Упражнения последней тренировки подопечного с упражнениями — чтобы повторить её */

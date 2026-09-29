@@ -1,5 +1,7 @@
 // Браузерная версия workouts.ts для превью: те же функции, но данные в localStorage.
 
+import type { ExerciseSession } from '@/lib/records';
+
 import { notifyChange } from './changes';
 import type { ExerciseInput, Workout, WorkoutExercise, WorkoutFields, WorkoutSet } from './schema';
 import { browserTable } from './webTable';
@@ -60,6 +62,22 @@ const api = {
       return null;
     }
     return { workout, exercises: exercisesOf(id) };
+  },
+
+  async listExerciseSessions(clientId: string): Promise<ExerciseSession[]> {
+    return alive()
+      .filter((w) => w.clientId === clientId && w.status === 'done')
+      .sort(byTimeAsc)
+      .flatMap((workout) =>
+        exercisesOf(workout.id).map((exercise) => ({
+          workoutId: workout.id,
+          date: workout.date,
+          name: exercise.name,
+          sets: exercise.sets
+            .filter((set) => set.reps !== null || set.weight !== null)
+            .map((set) => ({ reps: set.reps, weight: set.weight })),
+        })),
+      );
   },
 
   async getLastWorkoutExercises(clientId: string, exceptId: string): Promise<ExerciseInput[]> {
@@ -143,6 +161,7 @@ export const {
   listPlannedFrom,
   getWorkoutDetails,
   getLastWorkoutExercises,
+  listExerciseSessions,
   saveWorkout,
   deleteWorkout,
 } = api;

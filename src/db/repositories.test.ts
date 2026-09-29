@@ -12,6 +12,7 @@ import {
   deleteWorkout,
   getLastWorkoutExercises,
   getWorkoutDetails,
+  listExerciseSessions,
   listPlannedFrom,
   listWorkouts,
   listWorkoutsBetween,
@@ -134,7 +135,20 @@ describe('тренировки', () => {
     const last = await getLastWorkoutExercises('c-w', 'w2');
     expect(last.map((e) => e.name)).toEqual(['Присед со штангой']);
 
+    // Для рекордов — только проведённые тренировки, упражнения с подходами по порядку
+    await saveWorkout('w0', 'c-w', { date: '2026-09-05', status: 'done' }, [
+      { id: 'e0', name: 'Присед', sets: [set('s0a', 12, 40), set('s0b', 10, 42.5)] },
+      { id: 'e0-empty', name: 'Растяжка', sets: [] },
+    ]);
+    expect(await listExerciseSessions('c-w')).toEqual([
+      { workoutId: 'w0', date: '2026-09-05', name: 'Присед', sets: [{ reps: 12, weight: 40 }, { reps: 10, weight: 42.5 }] },
+      { workoutId: 'w0', date: '2026-09-05', name: 'Растяжка', sets: [] },
+      { workoutId: 'w1', date: '2026-09-10', name: 'Присед со штангой', sets: [{ reps: 10, weight: 42.5 }] },
+    ]);
+    await deleteWorkout('w0');
+
     await deleteWorkout('w1');
+    expect(await listExerciseSessions('c-w')).toEqual([]);
     expect((await listWorkouts('c-w')).map((w) => w.id)).toEqual(['w2']);
     expect(await getWorkoutDetails('w1')).toBeNull();
   });
@@ -156,9 +170,10 @@ describe('питание и резервная копия', () => {
   it('резервная копия содержит все таблицы', async () => {
     const backup = await exportBackup();
     expect(backup.tables.clients.length).toBeGreaterThanOrEqual(7);
-    expect(backup.tables.workouts.length).toBe(2);
-    expect(backup.tables.workout_exercises.length).toBe(1);
-    expect(backup.tables.sets.length).toBe(1);
+    // w1, w2 и удалённая w0 (удалённые тоже в копии — строки остаются)
+    expect(backup.tables.workouts.length).toBe(3);
+    expect(backup.tables.workout_exercises.length).toBe(3);
+    expect(backup.tables.sets.length).toBe(3);
     expect(backup.tables.nutrition_plans.length).toBe(2);
     expect(backup.tables.consents.length).toBe(2);
   });

@@ -13,10 +13,16 @@ type MetricChartProps = {
   unit: string;
   /** Подпись для экранного диктора */
   label: string;
+  /** Только целые деления шкалы (повторы) */
+  integer?: boolean;
 };
 
 const CHART_HEIGHT = 180;
 const Y_AXIS_WIDTH = 44;
+/** На сколько последняя дата может выступать правее своей точки, не упираясь в край графика */
+const LAST_LABEL_OVERHANG = 4;
+/** Ширина подписи последней даты — «29.09» помещается целиком */
+const LAST_LABEL_WIDTH = 40;
 
 /** ДД.ММ — полная дата видна в подсказке и в таблице под графиком */
 function shortDate(iso: string): string {
@@ -24,16 +30,23 @@ function shortDate(iso: string): string {
 }
 
 /** Линейный график одного показателя: тонкая линия, лёгкая заливка. Последнее значение — в заголовке над графиком. */
-export function MetricChart({ points, unit, label }: MetricChartProps) {
+export function MetricChart({ points, unit, label, integer = false }: MetricChartProps) {
   const { colors } = useTheme();
   const [width, setWidth] = useState(0);
-  const scale = niceScale(points.map((p) => p.value));
+  const scale = niceScale(points.map((p) => p.value), 4, integer);
+  // Подписи шкалы считаем сами: библиотека округляет деления вроде 0,25 до одного знака и сдвигает подпись
+  const yLabels = Array.from({ length: scale.sections + 1 }, (_, i) => formatMeasure(scale.min + i * scale.step));
   const labelEvery = Math.max(1, Math.ceil(points.length / 5));
   const withUnit = (value: number) => `${formatMeasure(value)}${unit ? ` ${unit}` : ''}`;
 
+  const chartWidth = width - Y_AXIS_WIDTH - spacing.lg;
+  // Шаг между точками — так же, как его считает библиотека при adjustToWidth
+  const pointSpacing = (chartWidth - spacing.lg) / Math.max(points.length - 1, 1);
   const data = points.map((point, index) => {
     const isLast = index === points.length - 1;
-    const showLabel = index === 0 || isLast || index % labelEvery === 0;
+    // Подпись прямо перед последней не ставим, если она ближе шага подписей — иначе даты слипаются
+    const farFromLast = points.length - 1 - index >= labelEvery;
+    const showLabel = index === 0 || isLast || (index % labelEvery === 0 && farFromLast);
     return {
       // График считает от нуля — сдвигаем точки к началу нашей шкалы
       value: point.value - scale.min,
@@ -41,7 +54,12 @@ export function MetricChart({ points, unit, label }: MetricChartProps) {
       // Последнюю дату выравниваем по правому краю точки, иначе она обрезается краем графика
       labelComponent: isLast
         ? () => (
-            <AppText style={[styles.lastLabel, { color: colors.textTertiary }]} numberOfLines={1}>
+            <AppText
+              style={[
+                styles.lastLabel,
+                { color: colors.textTertiary, marginLeft: pointSpacing / 2 + LAST_LABEL_OVERHANG - LAST_LABEL_WIDTH },
+              ]}
+              numberOfLines={1}>
               {shortDate(point.date)}
             </AppText>
           )
@@ -58,7 +76,7 @@ export function MetricChart({ points, unit, label }: MetricChartProps) {
       {width > 0 ? (
         <LineChart
           data={data}
-          width={width - Y_AXIS_WIDTH - spacing.lg}
+          width={chartWidth}
           height={CHART_HEIGHT}
           adjustToWidth
           disableScroll
@@ -77,7 +95,7 @@ export function MetricChart({ points, unit, label }: MetricChartProps) {
           stepValue={scale.step}
           noOfSections={scale.sections}
           yAxisLabelWidth={Y_AXIS_WIDTH}
-          formatYLabel={(value: string) => formatMeasure(Number(value) + scale.min)}
+          yAxisLabelTexts={yLabels}
           yAxisThickness={0}
           yAxisTextStyle={{ color: colors.textTertiary, fontSize: 12 }}
           xAxisColor={colors.border}
@@ -118,10 +136,10 @@ const styles = StyleSheet.create({
   wrapper: {
     marginLeft: -spacing.sm,
   },
-  // Подписи дат обрезаются по ширине графика — последнюю выравниваем правым краем под точкой
+  // Ячейка подписи начинается за полшага до точки: сдвигаем текст так, чтобы его правый край был у точки,
+  // иначе последняя дата обрезается краем графика
   lastLabel: {
-    width: 44,
-    marginLeft: -20,
+    width: LAST_LABEL_WIDTH,
     marginTop: -6,
     fontSize: 11,
     textAlign: 'right',

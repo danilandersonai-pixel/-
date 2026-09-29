@@ -65,7 +65,8 @@ function makeWorkouts(
       sets: Array.from({ length: t.sets }, () => ({
         id: makeId(),
         reps: t.reps,
-        weight: round(t.weight + t.step * (daysAgo.length - 1 - index), 0.5),
+        // daysAgo идёт от давних к недавним, поэтому index — номер тренировки по порядку
+        weight: round(t.weight + t.step * index, 0.5),
         restSec: 90,
       })),
     })),

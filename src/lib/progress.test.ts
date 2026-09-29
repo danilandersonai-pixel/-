@@ -80,4 +80,10 @@ describe('niceScale', () => {
     expect(scale.step).toBeGreaterThan(0);
     expect(scale.min).toBeLessThan(80);
   });
+
+  it('целые деления для повторов', () => {
+    expect(niceScale([15, 15, 15], 4, true)).toEqual({ min: 14, step: 1, sections: 2 });
+    const wide = niceScale([8, 20], 4, true);
+    expect(Number.isInteger(wide.step) && Number.isInteger(wide.min)).toBe(true);
+  });
 });

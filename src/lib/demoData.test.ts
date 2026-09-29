@@ -65,6 +65,16 @@ describe('демо-данные', () => {
     expect(olga.measurements[olga.measurements.length - 1].fields.date).toBe('2026-08-25');
   });
 
+  it('рабочий вес в упражнениях растёт от тренировки к тренировке', () => {
+    const [anna] = demo;
+    const squat = anna.workouts
+      .filter((w) => w.fields.status === 'done')
+      .sort((a, b) => a.fields.date.localeCompare(b.fields.date))
+      .map((w) => w.exercises[0].sets[0].weight ?? 0);
+    expect(squat[squat.length - 1]).toBeGreaterThan(squat[0]);
+    expect(squat.every((weight, i) => i === 0 || weight >= squat[i - 1])).toBe(true);
+  });
+
   it('у Анны % жира по складкам и снижается, у Игоря — по обхватам', () => {
     const [anna, igor] = demo;
     const annaBf = anna.measurements.map((m) =>

@@ -13,6 +13,8 @@ type WorkoutRowProps = {
   /** Имя подопечного — в календаре, где тренировки всех */
   clientName?: string;
   exerciseCount?: number;
+  /** В этой тренировке побит личный рекорд */
+  record?: boolean;
   onPress: () => void;
   divider?: boolean;
 };
@@ -20,7 +22,7 @@ type WorkoutRowProps = {
 const t = ru.workout;
 
 /** Строка тренировки: когда, статус, длительность, сколько упражнений */
-export function WorkoutRow({ workout, clientName, exerciseCount, onPress, divider = false }: WorkoutRowProps) {
+export function WorkoutRow({ workout, clientName, exerciseCount, record = false, onPress, divider = false }: WorkoutRowProps) {
   const { colors } = useTheme();
   const planned = workout.status === 'planned';
   const details = [
@@ -47,6 +49,11 @@ export function WorkoutRow({ workout, clientName, exerciseCount, onPress, divide
           {clientName ? [workout.startTime, ...details].filter(Boolean).join(' · ') || t.editTitle : details.join(' · ') || ' '}
         </AppText>
       </View>
+      {record ? (
+        <View accessibilityLabel={ru.records.recordBadge}>
+          <Icon name={icons.trophy} color="warning" size={20} />
+        </View>
+      ) : null}
       <View style={[styles.badge, { backgroundColor: planned ? colors.primarySoft : colors.surfaceMuted }]}>
         <AppText variant="caption" color={planned ? 'primary' : 'textSecondary'}>
           {planned ? t.planned : t.done}

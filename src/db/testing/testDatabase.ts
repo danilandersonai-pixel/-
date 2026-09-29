@@ -31,7 +31,10 @@ export function createTestDatabase() {
         statement.run(...values);
         return { rows: [] };
       }
-      const rows = statement.all(...values).map((row) => Object.values(row));
+      // Строки — массивами, как у драйвера на телефоне: в запросах с JOIN у таблиц есть
+      // одинаковые имена колонок (id), и в объекте они бы слились
+      statement.setReturnArrays(true);
+      const rows = statement.all(...values) as unknown as unknown[][];
       return { rows: method === 'get' ? (rows[0] ?? []) : rows };
     },
     { schema },

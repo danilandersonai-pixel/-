@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
 import { useLiveData } from './useLiveData';
-import { getWorkoutDetails, listPlannedFrom, listWorkouts, listWorkoutsBetween } from './workouts';
+import { getWorkoutDetails, listExerciseSessions, listPlannedFrom, listWorkouts, listWorkoutsBetween } from './workouts';
 
 export function useWorkouts(clientId: string) {
   const load = useCallback(() => listWorkouts(clientId), [clientId]);
@@ -20,5 +20,11 @@ export function usePlannedWorkouts(fromIso: string) {
 
 export function useWorkoutDetails(id: string) {
   const load = useCallback(() => getWorkoutDetails(id), [id]);
+  return useLiveData('workouts', load);
+}
+
+/** Упражнения проведённых тренировок — для личных рекордов */
+export function useExerciseSessions(clientId: string) {
+  const load = useCallback(() => listExerciseSessions(clientId), [clientId]);
   return useLiveData('workouts', load);
 }

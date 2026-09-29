@@ -105,11 +105,20 @@ function niceStep(rough: number): number {
  * Шкала оси Y с круглыми делениями вокруг данных: от `min` с шагом `step`, `sections` делений.
  * Ось не обязана начинаться с нуля — для веса 70–72 кг ноль сделал бы линию плоской.
  */
-export function niceScale(values: number[], sectionsWanted = 4): { min: number; step: number; sections: number } {
+export function niceScale(
+  values: number[],
+  sectionsWanted = 4,
+  /** Только целые деления — для повторов и других счётных величин */
+  integer = false,
+): { min: number; step: number; sections: number } {
   const low = Math.min(...values);
   const high = Math.max(...values);
   const span = high - low || Math.max(Math.abs(high) * 0.05, 1);
-  const step = niceStep(span / sectionsWanted);
+  let step = niceStep(span / sectionsWanted);
+  if (integer && !Number.isInteger(step)) {
+    // 0,1…0,5 → 1; 2,5 → 5
+    step = step < 1 ? 1 : step * 2;
+  }
   // Для положительных данных ось не уходит ниже нуля
   const min = Math.max(Math.floor((low - span * 0.1) / step) * step, low >= 0 ? 0 : -Infinity);
   const max = Math.ceil((high + span * 0.1) / step) * step;
