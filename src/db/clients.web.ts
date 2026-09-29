@@ -13,6 +13,18 @@ const api = {
     return sortClients(table.all().filter((client) => !client.archived));
   },
 
+  async listArchivedClients(): Promise<Client[]> {
+    return sortClients(table.all().filter((client) => client.archived));
+  },
+
+  async setClientArchived(id: string, archived: boolean): Promise<void> {
+    const existing = table.get(id);
+    if (existing) {
+      table.upsert({ ...existing, archived, updatedAt: Date.now() });
+      notifyChange('clients');
+    }
+  },
+
   async getClient(id: string): Promise<Client | null> {
     return table.get(id);
   },
@@ -41,4 +53,4 @@ const api = {
   },
 } satisfies typeof import('./clients');
 
-export const { listActiveClients, getClient, saveClient } = api;
+export const { listActiveClients, listArchivedClients, setClientArchived, getClient, saveClient } = api;

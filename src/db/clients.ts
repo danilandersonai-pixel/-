@@ -17,6 +17,18 @@ export async function getClient(id: string): Promise<Client | null> {
   return rows[0] ?? null;
 }
 
+/** Подопечные в архиве, по алфавиту */
+export async function listArchivedClients(): Promise<Client[]> {
+  const rows = await db.select().from(clients).where(eq(clients.archived, true));
+  return sortClients(rows);
+}
+
+/** Архив вместо удаления: подопечный пропадает из списка, но все данные остаются */
+export async function setClientArchived(id: string, archived: boolean): Promise<void> {
+  await db.update(clients).set({ archived, updatedAt: Date.now() }).where(eq(clients.id, id));
+  notifyChange('clients');
+}
+
 /** Создаёт подопечного или обновляет переданные поля, если он уже есть */
 export async function saveClient(id: string, fields: ClientFields): Promise<void> {
   const now = Date.now();

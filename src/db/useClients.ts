@@ -1,10 +1,14 @@
 import { useCallback } from 'react';
 
-import { getClient, listActiveClients } from './clients';
+import { getClient, listActiveClients, listArchivedClients } from './clients';
 import { useLiveData } from './useLiveData';
 
 export function useActiveClients() {
   return useLiveData('clients', listActiveClients);
+}
+
+export function useArchivedClients() {
+  return useLiveData('clients', listArchivedClients);
 }
 
 export function useClient(id: string) {

@@ -33,3 +33,21 @@ export function isoToRuDate(iso: string): string {
   const [yyyy, mm, dd] = iso.split('-');
   return `${dd}.${mm}.${yyyy}`;
 }
+
+/** Дата как «ГГГГ-ММ-ДД» по местному времени телефона */
+export function toIsoDate(date: Date): string {
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${date.getFullYear()}-${month}-${day}`;
+}
+
+/**
+ * Полных лет на дату `onIso` (обе даты — «ГГГГ-ММ-ДД»).
+ * Для формул возраст считаем на дату замера, а не на сегодня.
+ */
+export function ageOn(birthIso: string, onIso: string): number {
+  const [by, bm, bd] = birthIso.split('-').map(Number);
+  const [y, m, d] = onIso.split('-').map(Number);
+  const hadBirthday = m > bm || (m === bm && d >= bd);
+  return y - by - (hadBirthday ? 0 : 1);
+}

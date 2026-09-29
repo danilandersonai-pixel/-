@@ -25,4 +25,11 @@ export const icons = {
   searchPerson: { ios: 'person.fill.questionmark', android: 'person_search', web: 'person_search' },
   warning: { ios: 'exclamationmark.triangle', android: 'warning', web: 'warning' },
   calendar: { ios: 'calendar', android: 'calendar_month', web: 'calendar_month' },
+  lock: { ios: 'lock', android: 'lock', web: 'lock' },
+  archive: { ios: 'archivebox', android: 'inventory_2', web: 'inventory_2' },
+  health: { ios: 'heart.text.square', android: 'monitor_heart', web: 'monitor_heart' },
+  measurements: { ios: 'ruler', android: 'straighten', web: 'straighten' },
+  workouts: { ios: 'dumbbell', android: 'fitness_center', web: 'fitness_center' },
+  nutrition: { ios: 'fork.knife', android: 'restaurant', web: 'restaurant' },
+  consent: { ios: 'checkmark.seal', android: 'verified', web: 'verified' },
 } satisfies Record<string, IconName>;

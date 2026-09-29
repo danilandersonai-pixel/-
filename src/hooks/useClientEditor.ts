@@ -19,7 +19,7 @@ export function useClientEditor(id: string, initialValues: ClientFormValues) {
   const { fields, errors } = useMemo(() => formToClientFields(values), [values]);
   const save = useCallback((toSave: ClientFields) => saveClient(id, toSave), [id]);
   // Пока тренер ничего не менял, сохранять незачем
-  const status = useAutosave(dirty ? fields : null, save);
+  const { status, flush } = useAutosave(dirty ? fields : null, save);
 
-  return { values, setField, errors: dirty ? errors : {}, status };
+  return { values, setField, errors: dirty ? errors : {}, status, flush, canSave: fields !== null };
 }

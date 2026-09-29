@@ -1,4 +1,4 @@
-import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { integer, sqliteTable, text, uniqueIndex, index } from 'drizzle-orm/sqlite-core';
 
 // Схема базы данных. После изменения схемы: npx drizzle-kit generate — появится новая миграция.
 // Старые миграции не удалять и не менять.
@@ -34,3 +34,45 @@ export type Gender = NonNullable<Client['gender']>;
 /** Поля подопечного, которые меняет тренер. Имя обязательно, остальное — по желанию. */
 export type ClientFields = Pick<Client, 'firstName'> &
   Partial<Omit<Client, 'id' | 'firstName' | 'archived' | 'createdAt' | 'updatedAt'>>;
+
+/** Согласие подопечного на обработку персональных данных, в том числе о здоровье (152-ФЗ) */
+export const consents = sqliteTable(
+  'consents',
+  {
+    id: text('id').primaryKey(),
+    clientId: text('client_id')
+      .notNull()
+      .references(() => clients.id),
+    /** Когда подписано, мс */
+    signedAt: integer('signed_at').notNull(),
+    /** Версия текста согласия, который видел подопечный */
+    textVersion: text('text_version').notNull(),
+    /** ФИО подписавшего: сам подопечный или законный представитель */
+    signedBy: text('signed_by').notNull(),
+    /** Когда отозвано, мс. null — действует */
+    revokedAt: integer('revoked_at'),
+    ...timestamps,
+  },
+  (table) => [index('consents_client_idx').on(table.clientId)],
+);
+
+/** Здоровье: одна запись на подопечного */
+export const health = sqliteTable(
+  'health',
+  {
+    id: text('id').primaryKey(),
+    clientId: text('client_id')
+      .notNull()
+      .references(() => clients.id),
+    contraindications: text('contraindications'),
+    injuries: text('injuries'),
+    limitations: text('limitations'),
+    notes: text('notes'),
+    ...timestamps,
+  },
+  (table) => [uniqueIndex('health_client_idx').on(table.clientId)],
+);
+
+export type Consent = typeof consents.$inferSelect;
+export type Health = typeof health.$inferSelect;
+export type HealthFields = Partial<Pick<Health, 'contraindications' | 'injuries' | 'limitations' | 'notes'>>;

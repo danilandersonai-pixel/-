@@ -1,4 +1,4 @@
-import { isoToRuDate, maskDateInput, parseRuDate } from './date';
+import { ageOn, isoToRuDate, maskDateInput, parseRuDate, toIsoDate } from './date';
 
 describe('maskDateInput', () => {
   it('расставляет точки по мере ввода', () => {
@@ -38,5 +38,25 @@ describe('parseRuDate', () => {
 describe('isoToRuDate', () => {
   it('переводит ГГГГ-ММ-ДД в ДД.ММ.ГГГГ', () => {
     expect(isoToRuDate('1990-02-01')).toBe('01.02.1990');
+  });
+});
+
+describe('toIsoDate', () => {
+  it('берёт местную дату', () => {
+    expect(toIsoDate(new Date(2026, 8, 5, 23, 59))).toBe('2026-09-05');
+  });
+});
+
+describe('ageOn', () => {
+  it('считает полные годы на дату', () => {
+    expect(ageOn('1990-02-01', '2026-09-29')).toBe(36);
+    expect(ageOn('1990-10-01', '2026-09-29')).toBe(35);
+    expect(ageOn('1990-09-29', '2026-09-29')).toBe(36);
+    expect(ageOn('1990-09-30', '2026-09-29')).toBe(35);
+  });
+
+  it('родившиеся 29 февраля взрослеют 1 марта в невисокосный год', () => {
+    expect(ageOn('2000-02-29', '2025-02-28')).toBe(24);
+    expect(ageOn('2000-02-29', '2025-03-01')).toBe(25);
   });
 });

@@ -22,7 +22,10 @@ describe('formToClientFields', () => {
       gender: 'female',
       birthDate: '1990-02-01',
       phone: null,
+      email: null,
+      messenger: null,
       goal: null,
+      notes: null,
     });
   });
 

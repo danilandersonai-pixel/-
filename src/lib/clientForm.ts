@@ -9,7 +9,10 @@ export type ClientFormValues = {
   /** «ДД.ММ.ГГГГ» */
   birthDate: string;
   phone: string;
+  email: string;
+  messenger: string;
   goal: string;
+  notes: string;
 };
 
 export type ClientFormErrors = Partial<Record<'firstName' | 'birthDate', 'required' | 'invalid'>>;
@@ -20,7 +23,10 @@ export const emptyClientFormValues: ClientFormValues = {
   gender: null,
   birthDate: '',
   phone: '',
+  email: '',
+  messenger: '',
   goal: '',
+  notes: '',
 };
 
 export function clientToFormValues(client: Client): ClientFormValues {
@@ -30,11 +36,14 @@ export function clientToFormValues(client: Client): ClientFormValues {
     gender: client.gender,
     birthDate: client.birthDate ? isoToRuDate(client.birthDate) : '',
     phone: client.phone ?? '',
+    email: client.email ?? '',
+    messenger: client.messenger ?? '',
     goal: client.goal ?? '',
+    notes: client.notes ?? '',
   };
 }
 
-function textOrNull(text: string): string | null {
+export function textOrNull(text: string): string | null {
   const trimmed = text.trim();
   return trimmed === '' ? null : trimmed;
 }
@@ -59,7 +68,10 @@ export function formToClientFields(values: ClientFormValues): {
     lastName: textOrNull(values.lastName),
     gender: values.gender,
     phone: textOrNull(values.phone),
+    email: textOrNull(values.email),
+    messenger: textOrNull(values.messenger),
     goal: textOrNull(values.goal),
+    notes: textOrNull(values.notes),
   };
 
   if (values.birthDate.trim() === '') {

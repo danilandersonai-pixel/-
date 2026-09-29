@@ -1,6 +1,7 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
 
+import { ArchiveLink } from '@/components/ArchiveLink';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { ClientRow } from '@/components/ClientRow';
@@ -9,7 +10,7 @@ import { IconButton } from '@/components/IconButton';
 import { icons } from '@/components/Icon';
 import { Screen } from '@/components/Screen';
 import { SearchField } from '@/components/SearchField';
-import { useActiveClients } from '@/db/useClients';
+import { useActiveClients, useArchivedClients } from '@/db/useClients';
 import { ru } from '@/i18n/ru';
 import { matchesClientSearch } from '@/lib/clients';
 import { pluralRu } from '@/utils/plural';
@@ -18,9 +19,16 @@ function openNewClient() {
   router.push('/client/new');
 }
 
+function openArchive() {
+  router.push('/archive');
+}
+
 export default function ClientsScreen() {
   const { data: clients, error } = useActiveClients();
+  const { data: archived } = useArchivedClients();
   const [query, setQuery] = useState('');
+  const archiveLink =
+    archived && archived.length > 0 ? <ArchiveLink count={archived.length} onPress={openArchive} /> : null;
 
   if (error) {
     return (
@@ -44,6 +52,7 @@ export default function ClientsScreen() {
           hint={ru.clients.emptyHint}
           action={<Button title={ru.clients.add} icon={icons.add} onPress={openNewClient} />}
         />
+        {archiveLink}
       </Screen>
     );
   }
@@ -70,6 +79,7 @@ export default function ClientsScreen() {
           ))}
         </Card>
       )}
+      {archiveLink}
     </Screen>
   );
 }

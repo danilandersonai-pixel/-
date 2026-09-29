@@ -15,6 +15,8 @@ type ClientFormProps = {
   onChange: <K extends keyof ClientFormValues>(key: K, value: ClientFormValues[K]) => void;
   /** Поставить курсор в поле «Имя» при открытии */
   autoFocus?: boolean;
+  /** Полная форма профиля: ещё почта, мессенджер и заметки */
+  extended?: boolean;
 };
 
 const t = ru.clientForm;
@@ -25,7 +27,7 @@ const genderOptions: readonly { value: Gender; label: string }[] = [
 ];
 
 /** Форма профиля подопечного. Сама ничего не сохраняет — только сообщает об изменениях. */
-export function ClientForm({ values, errors, onChange, autoFocus = false }: ClientFormProps) {
+export function ClientForm({ values, errors, onChange, autoFocus = false, extended = false }: ClientFormProps) {
   return (
     <>
       <View style={styles.section}>
@@ -91,6 +93,26 @@ export function ClientForm({ values, errors, onChange, autoFocus = false }: Clie
           autoComplete="tel"
           textContentType="telephoneNumber"
         />
+        {extended ? (
+          <>
+            <TextField
+              label={t.email}
+              value={values.email}
+              onChangeText={(text) => onChange('email', text)}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoComplete="email"
+              textContentType="emailAddress"
+            />
+            <TextField
+              label={t.messenger}
+              value={values.messenger}
+              onChangeText={(text) => onChange('messenger', text)}
+              placeholder={t.messengerPlaceholder}
+              autoCapitalize="none"
+            />
+          </>
+        ) : null}
         <TextField
           label={t.goal}
           value={values.goal}
@@ -98,6 +120,15 @@ export function ClientForm({ values, errors, onChange, autoFocus = false }: Clie
           placeholder={t.goalPlaceholder}
           autoCapitalize="sentences"
         />
+        {extended ? (
+          <TextField
+            label={t.notes}
+            value={values.notes}
+            onChangeText={(text) => onChange('notes', text)}
+            placeholder={t.notesPlaceholder}
+            multiline
+          />
+        ) : null}
       </View>
 
       <AppText variant="caption" color="textTertiary" style={styles.footer}>

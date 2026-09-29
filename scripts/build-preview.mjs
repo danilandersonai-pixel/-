@@ -19,8 +19,8 @@ const outFile = resolve(root, process.argv[2] ?? 'dist-preview/index.html');
 const roadmap = [
   { title: 'Каркас: вкладки, светлая и тёмная тема', status: 'done' },
   { title: 'База данных и список подопечных', status: 'done' },
-  { title: 'Карточка подопечного и согласие на обработку данных', status: 'next' },
-  { title: 'Замеры и калькулятор состава тела', status: 'todo' },
+  { title: 'Карточка подопечного и согласие на обработку данных', status: 'done' },
+  { title: 'Замеры и калькулятор состава тела', status: 'next' },
   { title: 'Прогресс: графики и фото «до/после»', status: 'todo' },
   { title: 'Тренировки и календарь', status: 'todo' },
   { title: 'Питание: калории и КБЖУ', status: 'todo' },
