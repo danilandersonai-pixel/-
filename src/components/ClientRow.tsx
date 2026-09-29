@@ -9,7 +9,7 @@ import { ru } from '@/i18n/ru';
 import { clientFullName, clientInitials } from '@/lib/clients';
 import type { BodyFatTrend } from '@/lib/measurements';
 import { minTouchSize, spacing, useTheme } from '@/theme';
-import { formatNumber } from '@/utils/format';
+import { fill, formatNumber } from '@/utils/format';
 
 type ClientRowProps = {
   client: Client;
@@ -18,10 +18,12 @@ type ClientRowProps = {
   divider?: boolean;
   /** Последний % жира и изменение к прошлому замеру */
   trend?: BodyFatTrend | null;
+  /** Ближайшая тренировка: «Пт 02.10, 18:00» */
+  nextWorkout?: string | null;
 };
 
 /** Строка списка подопечных: аватар, имя, цель */
-export function ClientRow({ client, onPress, divider = false, trend = null }: ClientRowProps) {
+export function ClientRow({ client, onPress, divider = false, trend = null, nextWorkout = null }: ClientRowProps) {
   const { colors } = useTheme();
   const name = clientFullName(client);
   return (
@@ -43,6 +45,14 @@ export function ClientRow({ client, onPress, divider = false, trend = null }: Cl
           <AppText variant="callout" color={client.goal ? 'textSecondary' : 'textTertiary'} numberOfLines={1}>
             {client.goal ?? ru.clients.noGoal}
           </AppText>
+          {nextWorkout ? (
+            <View style={styles.next}>
+              <Icon name={icons.upcoming} color="primary" size={14} />
+              <AppText variant="caption" color="primary" numberOfLines={1}>
+                {fill(ru.workout.nextLine, { when: nextWorkout })}
+              </AppText>
+            </View>
+          ) : null}
         </View>
         {trend ? (
           <View style={styles.trend}>
@@ -79,5 +89,10 @@ const styles = StyleSheet.create({
   trend: {
     alignItems: 'flex-end',
     gap: 2,
+  },
+  next: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
   },
 });

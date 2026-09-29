@@ -7,6 +7,8 @@ export type WebTable<Row extends { id: string }> = {
   all(): Row[];
   get(id: string): Row | null;
   upsert(row: Row): void;
+  /** Настоящее удаление строки — только для вложенных записей (подходы, упражнения) */
+  remove(id: string): void;
 };
 
 /** localStorage, если он доступен (в приватном режиме доступ может бросить ошибку) */
@@ -58,6 +60,14 @@ export function createWebTable<Row extends { id: string }>(
         list.push(row);
       }
       persist(list);
+    },
+    remove: (id) => {
+      const list = load();
+      const index = list.findIndex((existing) => existing.id === id);
+      if (index >= 0) {
+        list.splice(index, 1);
+        persist(list);
+      }
     },
   };
 }

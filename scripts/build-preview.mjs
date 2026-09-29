@@ -22,8 +22,8 @@ const roadmap = [
   { title: 'Карточка подопечного и согласие на обработку данных', status: 'done' },
   { title: 'Замеры и калькулятор состава тела', status: 'done' },
   { title: 'Прогресс: графики и фото «до/после»', status: 'done' },
-  { title: 'Тренировки и календарь', status: 'next' },
-  { title: 'Питание: калории и КБЖУ', status: 'todo' },
+  { title: 'Тренировки и календарь', status: 'done' },
+  { title: 'Питание: калории и КБЖУ', status: 'next' },
   { title: 'PDF-отчёт и резервная копия', status: 'todo' },
 ];
 

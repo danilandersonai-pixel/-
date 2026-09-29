@@ -51,3 +51,24 @@ export function ageOn(birthIso: string, onIso: string): number {
   const hadBirthday = m > bm || (m === bm && d >= bd);
   return y - by - (hadBirthday ? 0 : 1);
 }
+
+/** Маска времени: «1830» → «18:30» */
+export function maskTimeInput(raw: string): string {
+  const digits = raw.replace(/\D/g, '').slice(0, 4);
+  return digits.length > 2 ? `${digits.slice(0, 2)}:${digits.slice(2)}` : digits;
+}
+
+/** «18:30» → «18:30», неверное время → null */
+export function parseTime(text: string): string | null {
+  const match = /^(\d{2}):(\d{2})$/.exec(text.trim());
+  if (!match || Number(match[1]) > 23 || Number(match[2]) > 59) {
+    return null;
+  }
+  return `${match[1]}:${match[2]}`;
+}
+
+/** Сдвиг даты «ГГГГ-ММ-ДД» на n дней */
+export function addDays(iso: string, days: number): string {
+  const [y, m, d] = iso.split('-').map(Number);
+  return toIsoDate(new Date(y, m - 1, d + days));
+}

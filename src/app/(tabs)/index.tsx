@@ -12,9 +12,13 @@ import { Screen } from '@/components/Screen';
 import { SearchField } from '@/components/SearchField';
 import { useActiveClients, useArchivedClients } from '@/db/useClients';
 import { useAllMeasurements } from '@/db/useMeasurements';
+import { usePlannedWorkouts } from '@/db/useWorkouts';
 import { ru } from '@/i18n/ru';
 import { matchesClientSearch } from '@/lib/clients';
 import { bodyFatTrend, groupByClient } from '@/lib/measurements';
+import { nextWorkoutByClient } from '@/lib/workouts';
+import { shortWhen } from '@/utils/calendar';
+import { toIsoDate } from '@/utils/date';
 import { pluralRu } from '@/utils/plural';
 
 function openNewClient() {
@@ -29,6 +33,7 @@ export default function ClientsScreen() {
   const { data: clients, error } = useActiveClients();
   const { data: archived } = useArchivedClients();
   const { data: allMeasurements } = useAllMeasurements();
+  const { data: planned } = usePlannedWorkouts(toIsoDate(new Date()));
   const [query, setQuery] = useState('');
   const archiveLink =
     archived && archived.length > 0 ? <ArchiveLink count={archived.length} onPress={openArchive} /> : null;
@@ -62,6 +67,7 @@ export default function ClientsScreen() {
 
   const found = clients.filter((client) => matchesClientSearch(client, query));
   const measurementsByClient = groupByClient(allMeasurements ?? []);
+  const nextWorkouts = nextWorkoutByClient(planned ?? []);
 
   return (
     <Screen
@@ -79,6 +85,10 @@ export default function ClientsScreen() {
               client={client}
               divider={index > 0}
               trend={bodyFatTrend(measurementsByClient.get(client.id) ?? [], client)}
+              nextWorkout={(() => {
+                const next = nextWorkouts.get(client.id);
+                return next ? shortWhen(next.date, next.startTime) : null;
+              })()}
               onPress={() => router.push({ pathname: '/client/[id]', params: { id: client.id } })}
             />
           ))}

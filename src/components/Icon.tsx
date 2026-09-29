@@ -37,4 +37,8 @@ export const icons = {
   help: { ios: 'questionmark.circle', android: 'help', web: 'help' },
   chart: { ios: 'chart.xyaxis.line', android: 'show_chart', web: 'show_chart' },
   photo: { ios: 'photo.on.rectangle', android: 'photo_library', web: 'photo_library' },
+  close: { ios: 'xmark', android: 'close', web: 'close' },
+  chevronLeft: { ios: 'chevron.left', android: 'chevron_left', web: 'chevron_left' },
+  upcoming: { ios: 'calendar.badge.clock', android: 'event_upcoming', web: 'event_upcoming' },
+  repeat: { ios: 'arrow.counterclockwise', android: 'history', web: 'history' },
 } satisfies Record<string, IconName>;

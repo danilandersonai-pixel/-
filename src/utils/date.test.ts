@@ -1,4 +1,4 @@
-import { ageOn, isoToRuDate, maskDateInput, parseRuDate, toIsoDate } from './date';
+import { addDays, ageOn, isoToRuDate, maskDateInput, maskTimeInput, parseRuDate, parseTime, toIsoDate } from './date';
 
 describe('maskDateInput', () => {
   it('расставляет точки по мере ввода', () => {
@@ -58,5 +58,21 @@ describe('ageOn', () => {
   it('родившиеся 29 февраля взрослеют 1 марта в невисокосный год', () => {
     expect(ageOn('2000-02-29', '2025-02-28')).toBe(24);
     expect(ageOn('2000-02-29', '2025-03-01')).toBe(25);
+  });
+});
+
+describe('время', () => {
+  it('маска и разбор времени', () => {
+    expect(maskTimeInput('18')).toBe('18');
+    expect(maskTimeInput('183')).toBe('18:3');
+    expect(maskTimeInput('18305')).toBe('18:30');
+    expect(parseTime('18:30')).toBe('18:30');
+    expect(parseTime('24:00')).toBeNull();
+    expect(parseTime('18:3')).toBeNull();
+  });
+
+  it('сдвиг даты через месяц', () => {
+    expect(addDays('2026-09-29', 3)).toBe('2026-10-02');
+    expect(addDays('2026-03-01', -1)).toBe('2026-02-28');
   });
 });

@@ -27,6 +27,16 @@ describe('createWebTable', () => {
     expect(table.get('3')).toBeNull();
   });
 
+  it('удаляет строку', () => {
+    const storage = memoryStorage();
+    const table = createWebTable<Row>('test', storage);
+    table.upsert({ id: '1', name: 'Анна' });
+    table.upsert({ id: '2', name: 'Иван' });
+    table.remove('1');
+    table.remove('нет такой');
+    expect(createWebTable<Row>('test', storage).all()).toEqual([{ id: '2', name: 'Иван' }]);
+  });
+
   it('данные переживают перезагрузку', () => {
     const storage = memoryStorage();
     createWebTable<Row>('test', storage).upsert({ id: '1', name: 'Анна' });

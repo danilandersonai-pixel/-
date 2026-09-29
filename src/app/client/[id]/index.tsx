@@ -7,6 +7,7 @@ import { ClientHealthTab } from '@/components/ClientHealthTab';
 import { ClientMeasurementsTab } from '@/components/ClientMeasurementsTab';
 import { ClientProfileTab } from '@/components/ClientProfileTab';
 import { ClientSummary } from '@/components/ClientSummary';
+import { ClientWorkoutsTab } from '@/components/ClientWorkoutsTab';
 import { clientTabs, ClientTabs, type ClientTab } from '@/components/ClientTabs';
 import { EmptyState } from '@/components/EmptyState';
 import { FormScreen } from '@/components/FormScreen';
@@ -74,9 +75,7 @@ export default function ClientCardScreen() {
       content = consent ? <ClientMeasurementsTab client={client} /> : locked;
       break;
     case 'workouts':
-      content = (
-        <EmptyState icon={icons.workouts} title={ru.card.workoutsEmptyTitle} hint={ru.card.workoutsEmptyHint} />
-      );
+      content = <ClientWorkoutsTab client={client} />;
       break;
     case 'nutrition':
       content = (

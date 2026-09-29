@@ -140,3 +140,75 @@ export const photos = sqliteTable(
 
 export type Photo = typeof photos.$inferSelect;
 export type PhotoAngle = Photo['angle'];
+
+/** Тренировка: запланированная или проведённая */
+export const workouts = sqliteTable(
+  'workouts',
+  {
+    id: text('id').primaryKey(),
+    clientId: text('client_id')
+      .notNull()
+      .references(() => clients.id),
+    /** ГГГГ-ММ-ДД */
+    date: text('date').notNull(),
+    /** ЧЧ:ММ */
+    startTime: text('start_time'),
+    durationMin: integer('duration_min'),
+    status: text('status', { enum: ['planned', 'done'] })
+      .notNull()
+      .default('done'),
+    /** Самочувствие 1–5 */
+    wellbeing: integer('wellbeing'),
+    notes: text('notes'),
+    deletedAt: integer('deleted_at'),
+    ...timestamps,
+  },
+  (table) => [index('workouts_client_date_idx').on(table.clientId, table.date), index('workouts_date_idx').on(table.date)],
+);
+
+export const workoutExercises = sqliteTable(
+  'workout_exercises',
+  {
+    id: text('id').primaryKey(),
+    workoutId: text('workout_id')
+      .notNull()
+      .references(() => workouts.id),
+    /** Порядок в тренировке, с 0 */
+    position: integer('position').notNull(),
+    name: text('name').notNull(),
+    ...timestamps,
+  },
+  (table) => [index('workout_exercises_workout_idx').on(table.workoutId)],
+);
+
+export const sets = sqliteTable(
+  'sets',
+  {
+    id: text('id').primaryKey(),
+    exerciseId: text('exercise_id')
+      .notNull()
+      .references(() => workoutExercises.id),
+    position: integer('position').notNull(),
+    reps: integer('reps'),
+    /** Вес снаряда, кг */
+    weight: real('weight'),
+    /** Отдых после подхода, секунды */
+    restSec: integer('rest_sec'),
+    ...timestamps,
+  },
+  (table) => [index('sets_exercise_idx').on(table.exerciseId)],
+);
+
+export type Workout = typeof workouts.$inferSelect;
+export type WorkoutStatus = Workout['status'];
+export type WorkoutFields = Pick<Workout, 'date' | 'status'> &
+  Partial<Pick<Workout, 'startTime' | 'durationMin' | 'wellbeing' | 'notes'>>;
+export type WorkoutExercise = typeof workoutExercises.$inferSelect;
+export type WorkoutSet = typeof sets.$inferSelect;
+
+/** Упражнение с подходами — так его редактирует тренер и так оно сохраняется */
+export type ExerciseInput = {
+  id: string;
+  name: string;
+  sets: { id: string; reps: number | null; weight: number | null; restSec: number | null }[];
+};
