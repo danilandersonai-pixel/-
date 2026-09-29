@@ -2,21 +2,26 @@ import { Pressable, StyleSheet, View } from 'react-native';
 
 import { AppText } from '@/components/AppText';
 import { Avatar } from '@/components/Avatar';
+import { DeltaBadge } from '@/components/DeltaBadge';
 import { Icon, icons } from '@/components/Icon';
 import type { Client } from '@/db/schema';
 import { ru } from '@/i18n/ru';
 import { clientFullName, clientInitials } from '@/lib/clients';
+import type { BodyFatTrend } from '@/lib/measurements';
 import { minTouchSize, spacing, useTheme } from '@/theme';
+import { formatNumber } from '@/utils/format';
 
 type ClientRowProps = {
   client: Client;
   onPress: () => void;
   /** Разделитель над строкой (у всех строк, кроме первой) */
   divider?: boolean;
+  /** Последний % жира и изменение к прошлому замеру */
+  trend?: BodyFatTrend | null;
 };
 
 /** Строка списка подопечных: аватар, имя, цель */
-export function ClientRow({ client, onPress, divider = false }: ClientRowProps) {
+export function ClientRow({ client, onPress, divider = false, trend = null }: ClientRowProps) {
   const { colors } = useTheme();
   const name = clientFullName(client);
   return (
@@ -39,6 +44,12 @@ export function ClientRow({ client, onPress, divider = false }: ClientRowProps) 
             {client.goal ?? ru.clients.noGoal}
           </AppText>
         </View>
+        {trend ? (
+          <View style={styles.trend}>
+            <AppText variant="headline">{`${formatNumber(trend.value, 1)} %`}</AppText>
+            <DeltaBadge delta={trend.delta} direction="down" unit="%" />
+          </View>
+        ) : null}
         <Icon name={icons.chevronRight} color="textTertiary" size={18} />
       </View>
     </Pressable>
@@ -63,6 +74,10 @@ const styles = StyleSheet.create({
   },
   text: {
     flex: 1,
+    gap: 2,
+  },
+  trend: {
+    alignItems: 'flex-end',
     gap: 2,
   },
 });

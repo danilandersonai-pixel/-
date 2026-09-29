@@ -32,4 +32,7 @@ export const icons = {
   workouts: { ios: 'dumbbell', android: 'fitness_center', web: 'fitness_center' },
   nutrition: { ios: 'fork.knife', android: 'restaurant', web: 'restaurant' },
   consent: { ios: 'checkmark.seal', android: 'verified', web: 'verified' },
+  arrowDown: { ios: 'arrow.down', android: 'arrow_downward', web: 'arrow_downward' },
+  arrowUp: { ios: 'arrow.up', android: 'arrow_upward', web: 'arrow_upward' },
+  help: { ios: 'questionmark.circle', android: 'help', web: 'help' },
 } satisfies Record<string, IconName>;

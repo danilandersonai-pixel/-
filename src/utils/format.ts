@@ -6,6 +6,11 @@ export function formatNumber(value: number, fractionDigits = 1): string {
   return normalized.replace('.', ',');
 }
 
+/** Значение замера: до одного знака, без лишнего «,0» — 71 → «71», 72.46 → «72,5» */
+export function formatMeasure(value: number): string {
+  return formatNumber(value, 1).replace(/,0$/, '');
+}
+
 /** Дата в формате ДД.ММ.ГГГГ */
 export function formatDate(date: Date): string {
   const day = String(date.getDate()).padStart(2, '0');
@@ -23,4 +28,9 @@ export function parseDecimal(input: string): number | null {
     return null;
   }
   return Number(normalized);
+}
+
+/** Подставляет значения в шаблон: fill('Шаг {step} из {total}', { step: 1, total: 3 }) → «Шаг 1 из 3» */
+export function fill(template: string, params: Record<string, string | number>): string {
+  return template.replace(/\{(\w+)\}/g, (match, key: string) => (key in params ? String(params[key]) : match));
 }

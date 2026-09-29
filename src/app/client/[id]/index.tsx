@@ -4,6 +4,7 @@ import { View } from 'react-native';
 
 import { Button } from '@/components/Button';
 import { ClientHealthTab } from '@/components/ClientHealthTab';
+import { ClientMeasurementsTab } from '@/components/ClientMeasurementsTab';
 import { ClientProfileTab } from '@/components/ClientProfileTab';
 import { ClientSummary } from '@/components/ClientSummary';
 import { clientTabs, ClientTabs, type ClientTab } from '@/components/ClientTabs';
@@ -70,15 +71,7 @@ export default function ClientCardScreen() {
       }
       break;
     case 'measurements':
-      content = consent ? (
-        <EmptyState
-          icon={icons.measurements}
-          title={ru.card.measurementsEmptyTitle}
-          hint={ru.card.measurementsEmptyHint}
-        />
-      ) : (
-        locked
-      );
+      content = consent ? <ClientMeasurementsTab client={client} /> : locked;
       break;
     case 'workouts':
       content = (

@@ -1,4 +1,4 @@
-import { integer, sqliteTable, text, uniqueIndex, index } from 'drizzle-orm/sqlite-core';
+import { index, integer, real, sqliteTable, text, uniqueIndex } from 'drizzle-orm/sqlite-core';
 
 // Схема базы данных. После изменения схемы: npx drizzle-kit generate — появится новая миграция.
 // Старые миграции не удалять и не менять.
@@ -76,3 +76,46 @@ export const health = sqliteTable(
 export type Consent = typeof consents.$inferSelect;
 export type Health = typeof health.$inferSelect;
 export type HealthFields = Partial<Pick<Health, 'contraindications' | 'injuries' | 'limitations' | 'notes'>>;
+
+/**
+ * Замер тела. Обхваты — см, складки — мм, вес — кг. Обязательны только дата и вес.
+ * Результаты расчётов (% жира и т. д.) не храним — они считаются из этих значений при показе.
+ */
+export const measurements = sqliteTable(
+  'measurements',
+  {
+    id: text('id').primaryKey(),
+    clientId: text('client_id')
+      .notNull()
+      .references(() => clients.id),
+    /** ГГГГ-ММ-ДД */
+    date: text('date').notNull(),
+    weight: real('weight').notNull(),
+    height: real('height'),
+    neck: real('neck'),
+    chest: real('chest'),
+    waist: real('waist'),
+    hips: real('hips'),
+    /** Плечо */
+    arm: real('arm'),
+    /** Бедро */
+    thigh: real('thigh'),
+    /** Голень */
+    calf: real('calf'),
+    skinfoldChest: real('skinfold_chest'),
+    skinfoldAbdomen: real('skinfold_abdomen'),
+    skinfoldThigh: real('skinfold_thigh'),
+    skinfoldTriceps: real('skinfold_triceps'),
+    skinfoldSuprailiac: real('skinfold_suprailiac'),
+    skinfoldCalf: real('skinfold_calf'),
+    restingHeartRate: integer('resting_heart_rate'),
+    /** Удалён (с подтверждением). Строка остаётся — пригодится для синхронизации с облаком. */
+    deletedAt: integer('deleted_at'),
+    ...timestamps,
+  },
+  (table) => [index('measurements_client_date_idx').on(table.clientId, table.date)],
+);
+
+export type Measurement = typeof measurements.$inferSelect;
+export type MeasurementFields = Pick<Measurement, 'date' | 'weight'> &
+  Partial<Omit<Measurement, 'id' | 'clientId' | 'date' | 'weight' | 'deletedAt' | 'createdAt' | 'updatedAt'>>;

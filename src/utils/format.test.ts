@@ -1,4 +1,4 @@
-import { formatDate, formatNumber, parseDecimal } from './format';
+import { fill, formatDate, formatMeasure, formatNumber, parseDecimal } from './format';
 
 describe('formatNumber', () => {
   it('ставит запятую вместо точки', () => {
@@ -34,5 +34,20 @@ describe('parseDecimal', () => {
     expect(parseDecimal('')).toBeNull();
     expect(parseDecimal('abc')).toBeNull();
     expect(parseDecimal('7,2,5')).toBeNull();
+  });
+});
+
+describe('fill', () => {
+  it('подставляет значения, неизвестные ключи оставляет', () => {
+    expect(fill('Шаг {step} из {total}', { step: 1, total: 3 })).toBe('Шаг 1 из 3');
+    expect(fill('{a} и {b}', { a: 'x' })).toBe('x и {b}');
+  });
+});
+
+describe('formatMeasure', () => {
+  it('убирает лишний ноль после запятой', () => {
+    expect(formatMeasure(71)).toBe('71');
+    expect(formatMeasure(72.46)).toBe('72,5');
+    expect(formatMeasure(71.04)).toBe('71');
   });
 });

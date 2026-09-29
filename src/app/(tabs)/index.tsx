@@ -11,8 +11,10 @@ import { icons } from '@/components/Icon';
 import { Screen } from '@/components/Screen';
 import { SearchField } from '@/components/SearchField';
 import { useActiveClients, useArchivedClients } from '@/db/useClients';
+import { useAllMeasurements } from '@/db/useMeasurements';
 import { ru } from '@/i18n/ru';
 import { matchesClientSearch } from '@/lib/clients';
+import { bodyFatTrend, groupByClient } from '@/lib/measurements';
 import { pluralRu } from '@/utils/plural';
 
 function openNewClient() {
@@ -26,6 +28,7 @@ function openArchive() {
 export default function ClientsScreen() {
   const { data: clients, error } = useActiveClients();
   const { data: archived } = useArchivedClients();
+  const { data: allMeasurements } = useAllMeasurements();
   const [query, setQuery] = useState('');
   const archiveLink =
     archived && archived.length > 0 ? <ArchiveLink count={archived.length} onPress={openArchive} /> : null;
@@ -58,6 +61,7 @@ export default function ClientsScreen() {
   }
 
   const found = clients.filter((client) => matchesClientSearch(client, query));
+  const measurementsByClient = groupByClient(allMeasurements ?? []);
 
   return (
     <Screen
@@ -74,6 +78,7 @@ export default function ClientsScreen() {
               key={client.id}
               client={client}
               divider={index > 0}
+              trend={bodyFatTrend(measurementsByClient.get(client.id) ?? [], client)}
               onPress={() => router.push({ pathname: '/client/[id]', params: { id: client.id } })}
             />
           ))}

@@ -1,7 +1,7 @@
 // Оповещение об изменениях в базе: экраны подписываются на таблицу
 // и перечитывают данные, когда в неё что-то записали.
 
-export type TableName = 'clients' | 'consents' | 'health';
+export type TableName = 'clients' | 'consents' | 'health' | 'measurements';
 
 type Listener = () => void;
 
