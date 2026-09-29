@@ -30,6 +30,7 @@ const roadmap = [
   { title: 'Восстановление из копии, фото в копии', status: 'done' },
   { title: 'Блок «Сегодня» и напоминания о замерах', status: 'done' },
   { title: 'Личные рекорды в упражнениях', status: 'done' },
+  { title: 'Оформление «Энергия», иконка, выбор темы', status: 'done' },
 ];
 
 const mimeTypes = {
