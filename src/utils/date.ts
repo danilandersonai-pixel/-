@@ -72,3 +72,12 @@ export function addDays(iso: string, days: number): string {
   const [y, m, d] = iso.split('-').map(Number);
   return toIsoDate(new Date(y, m - 1, d + days));
 }
+
+/** Сколько дней от одной даты «ГГГГ-ММ-ДД» до другой (отрицательно, если вторая раньше) */
+export function daysBetween(fromIso: string, toIso: string): number {
+  const utc = (iso: string) => {
+    const [y, m, d] = iso.split('-').map(Number);
+    return Date.UTC(y, m - 1, d);
+  };
+  return Math.round((utc(toIso) - utc(fromIso)) / 86_400_000);
+}

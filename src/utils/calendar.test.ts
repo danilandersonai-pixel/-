@@ -1,4 +1,4 @@
-import { monthGrid, monthRange, monthTitle, shiftMonth, shortWhen, weekdayOf } from './calendar';
+import { dayMonthTitle, monthGrid, monthRange, monthTitle, shiftMonth, shortWhen, weekdayOf } from './calendar';
 
 describe('календарь', () => {
   it('сентябрь 2026 начинается со вторника', () => {
@@ -26,5 +26,12 @@ describe('shortWhen', () => {
   it('день недели, дата и время', () => {
     expect(shortWhen('2026-10-02', '18:00')).toBe('Пт 02.10, 18:00');
     expect(shortWhen('2026-10-02', null)).toBe('Пт 02.10');
+  });
+});
+
+describe('dayMonthTitle', () => {
+  it('день и месяц в родительном падеже', () => {
+    expect(dayMonthTitle('2026-09-29')).toBe('29 сентября');
+    expect(dayMonthTitle('2026-03-01')).toBe('1 марта');
   });
 });

@@ -1,4 +1,4 @@
-import { addDays, ageOn, isoToRuDate, maskDateInput, maskTimeInput, parseRuDate, parseTime, toIsoDate } from './date';
+import { addDays, ageOn, daysBetween, isoToRuDate, maskDateInput, maskTimeInput, parseRuDate, parseTime, toIsoDate } from './date';
 
 describe('maskDateInput', () => {
   it('расставляет точки по мере ввода', () => {
@@ -74,5 +74,15 @@ describe('время', () => {
   it('сдвиг даты через месяц', () => {
     expect(addDays('2026-09-29', 3)).toBe('2026-10-02');
     expect(addDays('2026-03-01', -1)).toBe('2026-02-28');
+  });
+});
+
+describe('daysBetween', () => {
+  it('считает дни, в том числе через месяц, год и переход на летнее время', () => {
+    expect(daysBetween('2026-09-01', '2026-09-29')).toBe(28);
+    expect(daysBetween('2026-09-29', '2026-09-01')).toBe(-28);
+    expect(daysBetween('2025-12-31', '2026-01-01')).toBe(1);
+    expect(daysBetween('2026-03-28', '2026-04-01')).toBe(4);
+    expect(daysBetween('2028-02-28', '2028-03-01')).toBe(2);
   });
 });

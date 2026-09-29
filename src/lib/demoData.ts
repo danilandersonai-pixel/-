@@ -29,6 +29,13 @@ function round(value: number, step = 0.1): number {
   return Math.round(value / step) * step;
 }
 
+/** Дата рождения, чтобы день рождения был через inDays дней и исполнялось age лет */
+function birthdayIn(todayIso: string, inDays: number, age: number): string {
+  const day = addDays(todayIso, inDays);
+  const monthDay = day.slice(5) === '02-29' ? '02-28' : day.slice(5);
+  return `${Number(day.slice(0, 4)) - age}-${monthDay}`;
+}
+
 /** Плавное изменение от start к end за n шагов */
 function lerp(start: number, end: number, i: number, n: number): number {
   return n <= 1 ? end : start + ((end - start) * i) / (n - 1);
@@ -106,7 +113,8 @@ export function buildDemoData(todayIso: string, makeId: () => string): DemoClien
         restingHeartRate: Math.round(lerp(72, 64, i, annaCount)),
       },
     })),
-    workouts: makeWorkouts(makeId, todayIso, [26, 23, 21, 19, 16, 14, 12, 9, 7, 5, 2], [1, 3], [
+    // Одна тренировка запланирована на сегодня — её видно в блоке «Сегодня»
+    workouts: makeWorkouts(makeId, todayIso, [26, 23, 21, 19, 16, 14, 12, 9, 7, 5, 2], [0, 3], [
       { name: 'Приседания со штангой', reps: 12, weight: 30, step: 1, sets: 3 },
       { name: 'Румынская тяга', reps: 10, weight: 35, step: 1, sets: 3 },
       { name: 'Тяга верхнего блока', reps: 12, weight: 32, step: 0.5, sets: 3 },
@@ -129,7 +137,8 @@ export function buildDemoData(todayIso: string, makeId: () => string): DemoClien
       firstName: 'Игорь',
       lastName: 'Васильев',
       gender: 'male',
-      birthDate: '1988-11-03',
+      // День рождения через 3 дня — пример напоминания в блоке «Сегодня»
+      birthDate: birthdayIn(todayIso, 3, 38),
       phone: '+7 900 000-00-02',
       goal: 'Набрать мышечную массу',
       notes: DEMO_NOTE,
@@ -168,7 +177,7 @@ export function buildDemoData(todayIso: string, makeId: () => string): DemoClien
     },
   };
 
-  // Ольга: здоровье и тонус, два замера, есть противопоказание
+  // Ольга: здоровье и тонус, два замера (последний 35 дней назад — пора новый), есть противопоказание
   const olga: DemoClient = {
     id: makeId(),
     fields: {
@@ -188,8 +197,8 @@ export function buildDemoData(todayIso: string, makeId: () => string): DemoClien
       notes: null,
     },
     measurements: [
-      { id: makeId(), fields: { date: addDays(todayIso, -35), weight: 71.8, height: 164, neck: 34, waist: 84, hips: 106 } },
-      { id: makeId(), fields: { date: addDays(todayIso, -3), weight: 70.9, height: 164, neck: 34, waist: 82, hips: 105 } },
+      { id: makeId(), fields: { date: addDays(todayIso, -67), weight: 71.8, height: 164, neck: 34, waist: 84, hips: 106 } },
+      { id: makeId(), fields: { date: addDays(todayIso, -35), weight: 70.9, height: 164, neck: 34, waist: 82, hips: 105 } },
     ],
     workouts: makeWorkouts(makeId, todayIso, [20, 13, 6], [4], [
       { name: 'Гиперэкстензия', reps: 15, weight: 0, step: 0, sets: 3 },

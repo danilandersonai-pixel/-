@@ -17,6 +17,27 @@ const monthNames = [
   'Декабрь',
 ] as const;
 
+const monthNamesGenitive = [
+  'января',
+  'февраля',
+  'марта',
+  'апреля',
+  'мая',
+  'июня',
+  'июля',
+  'августа',
+  'сентября',
+  'октября',
+  'ноября',
+  'декабря',
+] as const;
+
+/** «29 сентября» */
+export function dayMonthTitle(iso: string): string {
+  const [, month, day] = iso.split('-').map(Number);
+  return `${day} ${monthNamesGenitive[month - 1]}`;
+}
+
 /** Месяц как год и номер 0–11 */
 export type MonthRef = { year: number; month: number };
 

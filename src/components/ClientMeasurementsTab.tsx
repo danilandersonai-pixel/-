@@ -6,12 +6,17 @@ import { Card } from '@/components/Card';
 import { EmptyState } from '@/components/EmptyState';
 import { icons } from '@/components/Icon';
 import { MeasurementRow } from '@/components/MeasurementRow';
+import { Notice } from '@/components/Notice';
 import type { Client } from '@/db/schema';
 import { useMeasurements } from '@/db/useMeasurements';
 import { ru } from '@/i18n/ru';
 import { compositionDelta } from '@/lib/calc/composition';
 import { compositionFor } from '@/lib/measurements';
+import { measurementOverdueDays } from '@/lib/today';
 import { spacing } from '@/theme';
+import { toIsoDate } from '@/utils/date';
+import { fill } from '@/utils/format';
+import { pluralRu } from '@/utils/plural';
 
 /** Вкладка «Замеры»: история и кнопка нового замера */
 export function ClientMeasurementsTab({ client }: { client: Client }) {
@@ -33,9 +38,19 @@ export function ClientMeasurementsTab({ client }: { client: Client }) {
   }
 
   const compositions = measurements.map((m) => compositionFor(m, client));
+  // Список отсортирован по дате, новые сверху
+  const overdue = measurementOverdueDays(measurements[0].date, toIsoDate(new Date()));
 
   return (
     <View style={styles.tab}>
+      {overdue !== null ? (
+        <Notice
+          icon={icons.measurements}
+          tone="warning"
+          title={ru.today.dueTitle}
+          text={fill(ru.today.dueText, { days: `${overdue} ${pluralRu(overdue, ru.today.dayForms)}` })}
+        />
+      ) : null}
       <Button title={ru.measurement.add} icon={icons.add} onPress={openNew} />
       <Button
         title={ru.progress.open}

@@ -43,4 +43,5 @@ export const icons = {
   repeat: { ios: 'arrow.counterclockwise', android: 'history', web: 'history' },
   doc: { ios: 'doc.text', android: 'description', web: 'description' },
   backup: { ios: 'externaldrive', android: 'backup', web: 'backup' },
+  birthday: { ios: 'gift', android: 'cake', web: 'cake' },
 } satisfies Record<string, IconName>;

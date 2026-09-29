@@ -52,10 +52,17 @@ describe('демо-данные', () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it('проведённые тренировки в прошлом, запланированные — в будущем', () => {
+  it('проведённые тренировки в прошлом, запланированные — с сегодняшнего дня', () => {
     const workouts = demo.flatMap((c) => c.workouts);
     expect(workouts.filter((w) => w.fields.status === 'done').every((w) => w.fields.date < today)).toBe(true);
-    expect(workouts.filter((w) => w.fields.status === 'planned').every((w) => w.fields.date > today)).toBe(true);
+    expect(workouts.filter((w) => w.fields.status === 'planned').every((w) => w.fields.date >= today)).toBe(true);
+  });
+
+  it('в блоке «Сегодня» есть что показать: тренировка, день рождения, замер', () => {
+    const [anna, igor, olga] = demo;
+    expect(anna.workouts.some((w) => w.fields.date === today && w.fields.status === 'planned')).toBe(true);
+    expect(igor.fields.birthDate).toBe('1988-10-02');
+    expect(olga.measurements[olga.measurements.length - 1].fields.date).toBe('2026-08-25');
   });
 
   it('у Анны % жира по складкам и снижается, у Игоря — по обхватам', () => {

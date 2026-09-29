@@ -11,6 +11,7 @@ import { IconButton } from '@/components/IconButton';
 import { icons } from '@/components/Icon';
 import { Screen } from '@/components/Screen';
 import { SearchField } from '@/components/SearchField';
+import { TodayCard } from '@/components/TodayCard';
 import { fillDemoData } from '@/db/demo';
 import { useActiveClients, useArchivedClients } from '@/db/useClients';
 import { useAllMeasurements } from '@/db/useMeasurements';
@@ -36,7 +37,8 @@ export default function ClientsScreen() {
   const { data: clients, error } = useActiveClients();
   const { data: archived } = useArchivedClients();
   const { data: allMeasurements } = useAllMeasurements();
-  const { data: planned } = usePlannedWorkouts(toIsoDate(new Date()));
+  const today = toIsoDate(new Date());
+  const { data: planned } = usePlannedWorkouts(today);
   const [query, setQuery] = useState('');
   const archiveLink =
     archived && archived.length > 0 ? <ArchiveLink count={archived.length} onPress={openArchive} /> : null;
@@ -76,6 +78,7 @@ export default function ClientsScreen() {
   const found = clients.filter((client) => matchesClientSearch(client, query));
   const measurementsByClient = groupByClient(allMeasurements ?? []);
   const nextWorkouts = nextWorkoutByClient(planned ?? []);
+  const showToday = query.trim() === '' && allMeasurements !== undefined && planned !== undefined;
 
   return (
     <Screen
@@ -83,6 +86,14 @@ export default function ClientsScreen() {
       subtitle={`${clients.length} ${pluralRu(clients.length, ru.clients.countForms)}`}
       headerRight={<IconButton icon={icons.add} label={ru.clients.add} onPress={openNewClient} />}>
       <SearchField value={query} onChangeText={setQuery} placeholder={ru.clients.searchPlaceholder} />
+      {showToday ? (
+        <TodayCard
+          todayIso={today}
+          clients={clients}
+          measurementsByClient={measurementsByClient}
+          planned={planned ?? []}
+        />
+      ) : null}
       {found.length === 0 ? (
         <EmptyState icon={icons.searchPerson} title={ru.clients.nothingFound} hint={ru.clients.nothingFoundHint} />
       ) : (
